@@ -1,0 +1,16 @@
+.app-card {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  flex-direction: column;
+
+  background: #fff;
+
+  padding: 40px;
+
+  border: 2px solid transparent;
+  border-radius: 7.5px;
+
+  box-shadow: 1.5rem -0.75rem transparentize($color: #000000, $amount: 0.75);
+}

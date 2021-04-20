@@ -1,0 +1,66 @@
+.app-input {
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  &__input {
+
+    width: 10rem;
+    height: 5%;
+
+    padding: 10px 10px 10px 15px;
+
+    margin-bottom: 1.5rem;
+
+    outline: none;
+
+    border: none;
+
+    border-radius: 5px 5px 0px 0px;
+    border-bottom: 2.7px solid #45526c;
+
+    background: #f4f9f9;
+
+    transition: all 0.3s linear;
+
+    &::placeholder {
+      font-size: 1rem;
+    }
+
+    &:hover,
+    &:focus {
+      border-color: #1e6f5c;
+    }
+    &--invalid {
+      border-color: #d32f2f;
+
+      &:hover,
+      &:focus {
+        border-color: #d32f2f;
+      }
+    }
+  }
+
+  &__error {
+    width: 10rem;
+    min-height: 5%;
+    max-height: 10%;
+
+    padding: 7.5px 10px 7.5px 10px;
+
+    margin-bottom: 20px;
+
+    border: 2px solid transparent;
+
+    margin-right: 2rem;
+    margin-left: 2rem;
+
+    color: #fff;
+
+    background: #d32f2f;
+
+    text-align: center;
+
+    font-family: sans-serif;
+  }
+}

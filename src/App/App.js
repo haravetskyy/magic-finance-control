@@ -1,5 +1,5 @@
 import './App.scss'
-import { SignInForm } from './components/SignUpForm'
+import { SignInForm } from './SignUpForm'
 
 function App() {
   return <SignInForm />
