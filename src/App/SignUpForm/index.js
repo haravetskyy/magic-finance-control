@@ -1,6 +1,7 @@
 import { Button } from 'App/components/Button'
 import { Card } from 'App/components/Card'
 import { Field } from 'App/components/Field'
+import { Password } from './Password'
 import React from 'react'
 import isEmail from 'validator/es/lib/isEmail'
 import './SignUpForm.scss'
@@ -110,18 +111,16 @@ export const SignInForm = () => {
             value={form.email.value}
             touched={form.email.touched}
             valid={isEmailValid}
-            error='Email is not valid'
+            errors={['Email is not valid']}
           />
 
-          <Field
+          <Password
             onBlur={handlePasswordBlur}
             onChange={handlePasswordChange}
             placeholder='Password'
             type='password'
             value={form.password.value}
             touched={form.password.touched}
-            valid={isPasswordValid}
-            error='Password is not valid'
           />
 
           <Field
@@ -132,7 +131,7 @@ export const SignInForm = () => {
             value={form.confirmPassword.value}
             touched={form.confirmPassword.touched}
             valid={isConfirmPasswordValid}
-            error='Passwords do not match'
+            errors={['Passwords do not match']}
           />
 
           <Button variant='success' onClick={handleSubmit}>
