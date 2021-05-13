@@ -1,8 +1,8 @@
 import './App.scss'
-import { SignInForm } from './SignUpForm'
+import { AccountsList } from './Accounts'
 
 function App() {
-  return <SignInForm />
+  return <AccountsList />
 }
 
 export default App

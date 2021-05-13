@@ -1,12 +1,11 @@
 import { Button } from 'App/components/Button'
 import { Card } from 'App/components/Card'
-import { Field } from 'App/components/Field'
-import { Password } from './Password'
+import { InputField } from 'App/components/InputField'
 import React from 'react'
 import isEmail from 'validator/es/lib/isEmail'
 import './SignUpForm.scss'
 
-export const SignInForm = () => {
+export const SignUpForm = () => {
   const [form, setForm] = React.useState({
     email: {
       value: '',
@@ -58,7 +57,26 @@ export const SignInForm = () => {
       },
     })
 
-  const passwordRegExp = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/
+  const isLengthValid = form.password.value.length >= 6 && form.password.value.length <= 24
+  const lengthErrorMessage = 'Password length must be between 6 and 24 characters!'
+
+  const hasOneCapitalLetter = /[A-Z]/.test(form.password.value)
+  const capitalLetterErrorMessage = 'Password must have at least one capital letter'
+
+  const hasOneDigit = /[0-9]/.test(form.password.value)
+  const digitErrorMessage = 'Pasword must have at least one digit'
+
+  const hasOneSmallLetter = /[a-z]/.test(form.password.value)
+  const smallLetterErrorMessage = 'Pasword must have at least one small letter'
+
+  const isPasswordValid = isLengthValid && hasOneCapitalLetter && hasOneDigit && hasOneSmallLetter
+
+  const passwordErrors = [
+    isLengthValid ? null : lengthErrorMessage,
+    hasOneCapitalLetter ? null : capitalLetterErrorMessage,
+    hasOneDigit ? null : digitErrorMessage,
+    hasOneSmallLetter ? null : smallLetterErrorMessage,
+  ].filter(error => error !== null)
 
   const handleConfirmPasswordChange = e =>
     setForm({
@@ -80,13 +98,11 @@ export const SignInForm = () => {
 
   const isEmailValid = isEmail(form.email.value)
 
-  const isPasswordValid = passwordRegExp.test(form.password.value)
-
   const isConfirmPasswordValid = form.password.value === form.confirmPassword.value
 
   const isFormValid = isEmailValid && isPasswordValid && isConfirmPasswordValid
 
-  const handleSubmit = () => {
+  const handleSubmit = e => {
     const user = {
       email: form.email.value,
       password: form.password.value,
@@ -95,6 +111,8 @@ export const SignInForm = () => {
     if (isFormValid) {
       alert(JSON.stringify(user))
     }
+
+    e.preventDefault()
   }
 
   return (
@@ -103,7 +121,7 @@ export const SignInForm = () => {
         <form className='sign-up__form'>
           <h1 className='sign-up__heading'>Sign Up</h1>
 
-          <Field
+          <InputField
             onBlur={handleEmailBlur}
             onChange={handleEmailChange}
             placeholder='Email Address'
@@ -114,16 +132,18 @@ export const SignInForm = () => {
             errors={['Email is not valid']}
           />
 
-          <Password
+          <InputField
             onBlur={handlePasswordBlur}
             onChange={handlePasswordChange}
+            valid={isPasswordValid}
+            errors={passwordErrors}
             placeholder='Password'
             type='password'
             value={form.password.value}
             touched={form.password.touched}
           />
 
-          <Field
+          <InputField
             onBlur={handleConfirmPasswordBlur}
             onChange={handleConfirmPasswordChange}
             placeholder='Confirm password'

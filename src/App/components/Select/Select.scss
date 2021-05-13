@@ -1,0 +1,23 @@
+.app-select {
+  margin-bottom: 24px;
+
+  padding: 1rem 2.5rem 1rem 1rem;
+  border: none;
+
+  font-size: 1.2rem;
+
+  color: #616161;
+  width: 100%;
+
+  appearance: none;
+  background: transparent;
+  background-image: url("data:image/svg+xml;utf8,<svg fill='black' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
+  background-repeat: no-repeat;
+  background-position-x: 95%;
+  background-position-y: 50%;
+  background-color: #f4f9f9;
+
+  &--invalid {
+    border-bottom: 3px solid #d32f2f;
+  }
+}

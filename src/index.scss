@@ -155,3 +155,7 @@ html {
 input[type='email']:invalid {
   box-shadow: none;
 }
+
+* {
+  box-sizing: border-box;
+}

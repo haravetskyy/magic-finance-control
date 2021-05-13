@@ -12,6 +12,8 @@ export const Button = props => {
         return 'app-button--warning'
       case 'danger':
         return 'app-button--danger'
+      case 'icon':
+        return 'app-button--icon'
       default:
         return null
     }
