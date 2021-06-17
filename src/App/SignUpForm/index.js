@@ -4,6 +4,7 @@ import { InputField } from 'App/components/InputField'
 import React from 'react'
 import isEmail from 'validator/es/lib/isEmail'
 import './SignUpForm.scss'
+import { createUser } from 'lib/auth'
 
 export const SignUpForm = () => {
   const [form, setForm] = React.useState({
@@ -109,7 +110,7 @@ export const SignUpForm = () => {
     }
 
     if (isFormValid) {
-      alert(JSON.stringify(user))
+      createUser(user)
     }
 
     e.preventDefault()

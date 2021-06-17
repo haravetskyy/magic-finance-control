@@ -86,7 +86,7 @@ export const AddAccount = props => {
     }
 
     if (isFormValid) {
-      props.onAddAccount(account)
+      props.onSubmit(account)
     }
 
     e.preventDefault()

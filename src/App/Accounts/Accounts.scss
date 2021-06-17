@@ -17,3 +17,43 @@
     margin-top: auto;
   }
 }
+
+.app-account {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+
+  height: 100px;
+  padding: 16px;
+
+  box-shadow: 0px 16px 8px -1px rgba(34, 60, 80, 0.2);
+
+  &__name,
+  &__currency {
+    font-family: 'Lato', sans-serif;
+  }
+
+  &__name {
+    font-size: 1.75rem;
+    padding: 0px 0px 4px 0px;
+  }
+
+  &__currency {
+    font-size: 1.25rem;
+    color: #a8a8a8;
+  }
+
+  &__text-wrapper {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__button {
+    padding: 0;
+
+    img {
+      width: 2.75rem;
+    }
+  }
+}
