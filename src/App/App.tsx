@@ -1,20 +1,20 @@
-import { User } from 'lib/auth'
-import { auth } from 'lib/firebase'
+import { auth, firestore } from 'lib/firebase'
 import React from 'react'
 import { AccountsList } from './Accounts'
 import './App.scss'
 import { SignUpForm } from './SignUpForm'
 
 function App() {
-  const [user, setUser] = React.useState<User | null>(null)
+  const [userUid, setUserUid] = React.useState<string | null>(null)
 
   React.useEffect(() => {
     auth.onAuthStateChanged(user => {
-      if (user !== null && user.email !== null) {
-        setUser({
-          uid: user.uid,
-          email: user.email,
-        })
+      if (user !== null) {
+        firestore
+          .collection('users')
+          .doc(user.uid)
+          .get()
+          .then(({ id }) => setUserUid(id))
       }
     })
   }, [])
@@ -24,7 +24,7 @@ function App() {
       {/* <AccountsList /> */}
       {/* <SignUpForm /> */}
       {/* <SignInForm /> */}
-      {user !== null ? <AccountsList userUID={user.uid} /> : <SignUpForm />}
+      {userUid !== null ? <AccountsList userUid={userUid} /> : <SignUpForm />}
     </div>
   )
 }

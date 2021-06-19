@@ -1,7 +1,7 @@
 import { Button } from 'App/components/Button'
 import { InputField } from 'App/components/InputField'
 import { SelectField } from 'App/components/SelectField'
-import { Account } from 'lib/accounts'
+import { CreateAccount } from 'lib/accounts'
 import { isNonNullable } from 'lib/guards'
 import React from 'react'
 import './Accounts.scss'
@@ -13,7 +13,7 @@ const currencies = [
 ]
 
 type AddAccountProps = {
-  onSubmit: (account: Account) => void
+  onSubmit: (account: CreateAccount) => void
 }
 
 export const AddAccount: React.FC<AddAccountProps> = props => {

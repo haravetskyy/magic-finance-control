@@ -13,7 +13,7 @@ type Props = React.SelectHTMLAttributes<HTMLSelectElement> & {
 
 export const Select: React.FC<Props> = ({ options, hiddenLabel, className, ...props }) => {
   const placeholder = (
-    <option hidden key={-1}>
+    <option hidden key='hidden-label'>
       {hiddenLabel}
     </option>
   )

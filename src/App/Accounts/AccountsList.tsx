@@ -1,6 +1,6 @@
 import { Button } from 'App/components/Button'
 import { Dialog } from 'App/components/Dialog'
-import { Account } from 'lib/accounts'
+import { Account, createAccount, CreateAccount, getAccounts } from 'lib/accounts'
 import React from 'react'
 import { AddAccount } from './AddAccount'
 
@@ -28,20 +28,33 @@ export const AccountItem: React.FC<AccountProps> = props => {
 }
 
 type AccountsListProps = {
-  userUID: string
+  userUid: string
 }
 
-export const AccountsList: React.FC<AccountsListProps> = ({ userUID }) => {
+export const AccountsList: React.FC<AccountsListProps> = ({ userUid }) => {
   const [isOpened, setIsOpened] = React.useState(false)
   const [accounts, setAccounts] = React.useState<Array<Account>>([])
 
+  const refreshAccounts = () =>
+    getAccounts(userUid).then(({ docs }) => {
+      const accounts = docs.map(doc => {
+        const { name, currency } = doc.data()
+
+        return { uid: doc.id, name, currency }
+      })
+      setAccounts(accounts)
+    })
+
   React.useEffect(() => {
-    // TODO
-    // getAccounts(userUID)
+    refreshAccounts()
   }, [])
 
-  const handleSubmit = (account: Account) => {
-    setIsOpened(false)
+  const handleSubmit = (account: CreateAccount) => {
+    createAccount(userUid, account).then(() => {
+      setIsOpened(false)
+
+      return refreshAccounts()
+    })
   }
 
   const handleEdit = () => {
@@ -62,7 +75,7 @@ export const AccountsList: React.FC<AccountsListProps> = ({ userUID }) => {
 
       <div>
         {accounts.map(account => (
-          <AccountItem key={account.name} account={account} onEdit={handleEdit} />
+          <AccountItem key={account.uid} account={account} onEdit={handleEdit} />
         ))}
       </div>
     </>
