@@ -1,18 +1,16 @@
-import './App.scss'
-import { AccountsList } from './Accounts'
-import { SignUpForm } from './SignUpForm'
+import { User } from 'lib/auth'
 import { auth } from 'lib/firebase'
-import { SignInForm } from './SignInForm'
 import React from 'react'
+import { AccountsList } from './Accounts'
+import './App.scss'
+import { SignUpForm } from './SignUpForm'
 
 function App() {
-  // return <SignUpForm />
-
-  const [user, setUser] = React.useState(null)
+  const [user, setUser] = React.useState<User | null>(null)
 
   React.useEffect(() => {
     auth.onAuthStateChanged(user => {
-      if (user !== null) {
+      if (user !== null && user.email !== null) {
         setUser({
           uid: user.uid,
           email: user.email,

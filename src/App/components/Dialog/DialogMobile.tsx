@@ -1,8 +1,12 @@
-import React from 'react'
-import './Dialog.scss'
 import { Button } from 'App/components/Button'
+import './Dialog.scss'
 
-export const DialogMobile = props => {
+type Props = {
+  children: JSX.Element
+  onClose: () => void
+}
+
+export const DialogMobile: React.FC<Props> = props => {
   return (
     <div className='app-dialog-mobile'>
       <header className='app-dialog-mobile__header'>

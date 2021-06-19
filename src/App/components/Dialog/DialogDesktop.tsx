@@ -1,8 +1,12 @@
-import React from 'react'
-import './Dialog.scss'
 import { Button } from 'App/components/Button'
+import './Dialog.scss'
 
-export const DialogDesktop = props => {
+type Props = {
+  children: JSX.Element
+  onClose: () => void
+}
+
+export const DialogDesktop: React.FC<Props> = props => {
   return (
     <div className='app-dialog-desktop'>
       <header className='app-dialog-desktop__header'>

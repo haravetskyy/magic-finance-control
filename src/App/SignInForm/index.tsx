@@ -5,7 +5,7 @@ import { useState } from 'react'
 import { signIn } from 'lib/auth'
 import './SignInForm.scss'
 
-const isNonEmpty = str => str.length !== 0
+const isNonEmpty = (str: string) => str.length !== 0
 
 export const SignInForm = () => {
   const [form, setForm] = useState({
@@ -19,7 +19,7 @@ export const SignInForm = () => {
     },
   })
 
-  const handleEmailChange = e =>
+  const handleEmailChange: React.ChangeEventHandler<HTMLInputElement> = e =>
     setForm({
       ...form,
       email: {
@@ -37,7 +37,7 @@ export const SignInForm = () => {
       },
     })
 
-  const handlePasswordChange = e =>
+  const handlePasswordChange: React.ChangeEventHandler<HTMLInputElement> = e =>
     setForm({
       ...form,
       password: {
@@ -60,7 +60,7 @@ export const SignInForm = () => {
 
   const isFormValid = isEmailValid && isPasswordValid
 
-  const handleSubmit = e => {
+  const handleSubmit = (e: React.SyntheticEvent): void => {
     if (isFormValid) {
       signIn(form.email.value, form.password.value).then(console.log)
     }

@@ -1,9 +1,12 @@
-import React from 'react'
 import { Error } from 'App/components/Error'
 import { Select } from 'App/components/Select'
+import { FieldProps } from 'App/components/types'
 import { className } from 'lib/className'
+import { ComponentProps } from 'react'
 
-export const SelectField = ({ touched, valid, errors, ...props }) => {
+type Props = ComponentProps<typeof Select> & FieldProps
+
+export const SelectField: React.FC<Props> = ({ touched, valid, errors, ...props }) => {
   const isSelectFieldInvalid = !valid && touched
 
   const classNames = className([

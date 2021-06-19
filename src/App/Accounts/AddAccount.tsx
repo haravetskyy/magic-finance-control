@@ -1,7 +1,9 @@
-import React from 'react'
+import { Button } from 'App/components/Button'
 import { InputField } from 'App/components/InputField'
 import { SelectField } from 'App/components/SelectField'
-import { Button } from 'App/components/Button'
+import { Account } from 'lib/accounts'
+import { isNonNullable } from 'lib/guards'
+import React from 'react'
 import './Accounts.scss'
 
 const currencies = [
@@ -10,7 +12,11 @@ const currencies = [
   { label: 'Hryvnia', value: 'UAH' },
 ]
 
-export const AddAccount = props => {
+type AddAccountProps = {
+  onSubmit: (account: Account) => void
+}
+
+export const AddAccount: React.FC<AddAccountProps> = props => {
   const [form, setForm] = React.useState({
     name: {
       value: '',
@@ -22,7 +28,7 @@ export const AddAccount = props => {
     },
   })
 
-  const handleNameChange = e =>
+  const handleNameChange: React.ChangeEventHandler<HTMLInputElement> = e =>
     setForm({
       ...form,
       name: {
@@ -40,7 +46,7 @@ export const AddAccount = props => {
       },
     })
 
-  const handleCurrencyChange = e =>
+  const handleCurrencyChange: React.ChangeEventHandler<HTMLSelectElement> = e =>
     setForm({
       ...form,
       currency: {
@@ -71,7 +77,7 @@ export const AddAccount = props => {
   const nameErrors = [
     isLengthValid ? null : lengthErrorMessage,
     isNotEmpty ? null : emptyErrorMessage,
-  ].filter(error => error !== null)
+  ].filter(isNonNullable)
 
   const isCurrencyValid = form.currency.value !== ''
 
@@ -79,7 +85,7 @@ export const AddAccount = props => {
 
   const isFormValid = isNameValid && isCurrencyValid
 
-  const handleSubmit = e => {
+  const handleSubmit = (e: React.SyntheticEvent) => {
     const account = {
       name: form.name.value,
       currency: form.currency.value,

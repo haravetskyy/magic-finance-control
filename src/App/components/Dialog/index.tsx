@@ -1,12 +1,14 @@
-import React from 'react'
-
 import { useIsMobileDevice } from 'App/hooks/useIsMobileDevice'
-import { DialogMobile } from './DialogMobile'
-import { DialogDesktop } from './DialogDesktop'
-
 import './Dialog.scss'
+import { DialogDesktop } from './DialogDesktop'
+import { DialogMobile } from './DialogMobile'
 
-export const Dialog = props => {
+type Props = {
+  children: JSX.Element
+  onClose: () => void
+}
+
+export const Dialog: React.FC<Props> = props => {
   const isMobileDevice = useIsMobileDevice()
 
   return (

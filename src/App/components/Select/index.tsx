@@ -1,10 +1,17 @@
+import { prepend } from 'lib/array'
+import { className as cn } from 'lib/className'
 import React from 'react'
 import './Select.scss'
-import { className as cn } from 'lib/className'
 
-const prepend = (e, arr) => [e, ...arr]
+type Props = React.SelectHTMLAttributes<HTMLSelectElement> & {
+  options: Array<{
+    label: string
+    value: string
+  }>
+  hiddenLabel: string
+}
 
-export const Select = ({ options, hiddenLabel, className, ...props }) => {
+export const Select: React.FC<Props> = ({ options, hiddenLabel, className, ...props }) => {
   const placeholder = (
     <option hidden key={-1}>
       {hiddenLabel}
@@ -21,7 +28,7 @@ export const Select = ({ options, hiddenLabel, className, ...props }) => {
 
   return (
     <select className={classNames} {...props}>
-      {prepend(placeholder, children)}
+      {prepend(children, placeholder)}
     </select>
   )
 }
