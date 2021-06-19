@@ -62,7 +62,7 @@ export const SignInForm = () => {
 
   const handleSubmit = (e: React.SyntheticEvent): void => {
     if (isFormValid) {
-      signIn(form.email.value, form.password.value).then(console.log)
+      signIn(form.email.value, form.password.value)
     }
 
     e.preventDefault()
