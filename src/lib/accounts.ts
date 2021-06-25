@@ -16,3 +16,6 @@ export const createAccount = (userUID: string, account: CreateAccount) =>
 
 export const getAccounts = (userUID: string) =>
   firestore.collection('users').doc(userUID).collection('accounts').get()
+
+export const removeAccount = (userUID: string, accountUID: string): Promise<void> =>
+  firestore.collection('users').doc(userUID).collection('accounts').doc(accountUID).delete()
