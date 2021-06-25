@@ -12,17 +12,30 @@ type AccountProps = {
 export const AccountItem: React.FC<AccountProps> = props => {
   return (
     <div className='app-account'>
-      <div className='app-account__text-wrapper'>
-        <h3 className='app-account__name'>{props.account.name}</h3>
-        <h4 className='app-account__currency'>{props.account.currency}</h4>
-      </div>
+      <div className='app-account__container'>
+        <div className='app-account__text-wrapper'>
+          <h3 className='app-account__name'>{props.account.name}</h3>
+          <h4 className='app-account__currency'>{props.account.currency}</h4>
+        </div>
 
-      <Button className='app-account__button' variant='icon' onClick={props.onEdit}>
-        <img
-          alt='Edit'
-          src='https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Edit_icon_%28the_Noun_Project_30184%29.svg/1024px-Edit_icon_%28the_Noun_Project_30184%29.svg.png'
-        />
-      </Button>
+        <div className='app-account__button-wrapper'>
+          <Button className='app-account__button' variant='icon' onClick={props.onEdit}>
+            <img
+              alt='Edit'
+              src='https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Edit_icon_%28the_Noun_Project_30184%29.svg/1024px-Edit_icon_%28the_Noun_Project_30184%29.svg.png'
+            />
+          </Button>
+          <Button className='app-account__button' variant='icon' onClick={props.onEdit}>
+            <img
+              alt='Delete'
+              src='https://icons-for-free.com/iconfiles/png/512/delete+remove+trash+trash+bin+trash+can+icon-1320073117929397588.png'
+            />
+          </Button>
+        </div>
+      </div>
+      <div className='app-account__indent'>
+        <p className='app-account__divider-line'></p>
+      </div>
     </div>
   )
 }
@@ -63,7 +76,7 @@ export const AccountsList: React.FC<AccountsListProps> = ({ userUid }) => {
 
   return (
     <>
-      <Button variant='icon' onClick={() => setIsOpened(true)}>
+      <Button variant='icon' onClick={() => setIsOpened(true)} className='add-account__button'>
         +
       </Button>
 
@@ -73,7 +86,7 @@ export const AccountsList: React.FC<AccountsListProps> = ({ userUid }) => {
         </Dialog>
       ) : null}
 
-      <div>
+      <div className='account-wrapper'>
         {accounts.map(account => (
           <AccountItem key={account.uid} account={account} onEdit={handleEdit} />
         ))}

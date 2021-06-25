@@ -2,6 +2,7 @@ import { auth, firestore } from 'lib/firebase'
 import React from 'react'
 import { AccountsList } from './Accounts'
 import './App.scss'
+import { NavBar } from './NavBar'
 import { SignUpForm } from './SignUpForm'
 
 function App() {
@@ -20,11 +21,11 @@ function App() {
   }, [])
 
   return (
-    <div className='app-container'>
-      {/* <AccountsList /> */}
-      {/* <SignUpForm /> */}
-      {/* <SignInForm /> */}
-      {userUid !== null ? <AccountsList userUid={userUid} /> : <SignUpForm />}
+    <div className='app'>
+      <NavBar />
+      <div className='app__container'>
+        {userUid !== null ? <AccountsList userUid={userUid} /> : <SignUpForm />}
+      </div>
     </div>
   )
 }

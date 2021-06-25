@@ -1,1 +1,26 @@
+.app {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
 
+  &__container {
+    width: 980px;
+  }
+}
+
+@media (max-width: 980px) {
+  .app {
+    &__container {
+      width: 100%;
+    }
+  }
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
