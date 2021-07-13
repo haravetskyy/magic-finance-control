@@ -11,7 +11,7 @@ export const DialogMobile: React.FC<Props> = props => {
     <div className='app-dialog-mobile'>
       <header className='app-dialog-mobile__header'>
         <Button variant='icon' onClick={props.onClose}>
-          x
+          <span className='far fa-times-circle' aria-hidden='true'></span>
         </Button>
       </header>
 

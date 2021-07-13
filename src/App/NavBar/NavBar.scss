@@ -4,7 +4,7 @@
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  background: #7986cb;
+  background: #7e57c2;
   width: 100%;
   padding: 16px;
 
@@ -16,7 +16,7 @@
     display: flex;
     flex-direction: row;
     justify-content: flex-end;
-    padding: 0px;
+    padding: 0;
   }
 
   &__items-container {
@@ -36,11 +36,15 @@
     box-sizing: border-box;
     width: 100%;
     padding: 16px;
+
+    button {
+      color: #fff;
+    }
   }
 
   &__button {
-    width: 32px;
-    font-size: 2rem;
+    width: 3.2rem;
+    font-size: 2.6rem;
     padding: 0;
     color: #fff;
   }
@@ -48,8 +52,9 @@
   &__heading {
     text-transform: uppercase;
     color: #fff;
-    font-size: 2rem;
-    font-family: sans-serif;
+    font-size: 2.6rem;
+    font-family: 'Cabin', sans-serif;
+    font-weight: 500;
   }
 
   &__indent {

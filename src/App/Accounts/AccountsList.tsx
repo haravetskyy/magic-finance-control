@@ -1,12 +1,19 @@
 import { Button } from 'App/components/Button'
 import { Dialog } from 'App/components/Dialog'
-import { Account, createAccount, CreateAccount, getAccounts, removeAccount } from 'lib/accounts'
+import {
+  Account,
+  createAccount,
+  CreateAccount,
+  getAccounts,
+  removeAccount,
+  updateAccount,
+} from 'lib/accounts'
 import React from 'react'
 import { AddAccount } from './AddAccount'
 
 type AccountProps = {
   account: Account
-  onEdit: () => void
+  onEdit: (account: Account) => void
   onDelete: (accountUid: string) => void
 }
 
@@ -20,26 +27,22 @@ export const AccountItem: React.FC<AccountProps> = props => {
         </div>
 
         <div className='app-account__button-wrapper'>
-          <Button className='app-account__button' variant='icon' onClick={props.onEdit}>
-            <img
-              alt='Edit'
-              src='https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Edit_icon_%28the_Noun_Project_30184%29.svg/1024px-Edit_icon_%28the_Noun_Project_30184%29.svg.png'
-            />
+          <Button
+            className='app-account__button'
+            variant='icon'
+            onClick={() => props.onEdit(props.account)}>
+            <span className='far fa-edit'></span>
           </Button>
           <Button
             className='app-account__button'
             variant='icon'
             onClick={() => props.onDelete(props.account.uid)}>
-            <img
-              alt='Delete'
-              src='https://icons-for-free.com/iconfiles/png/512/delete+remove+trash+trash+bin+trash+can+icon-1320073117929397588.png'
-            />
+            <span className='fas fa-eraser'></span>
           </Button>
         </div>
       </div>
-      <div className='app-account__indent'>
-        <p className='app-account__divider-line'></p>
-      </div>
+
+      <hr className='app-account__line'></hr>
     </div>
   )
 }
@@ -51,6 +54,7 @@ type AccountsListProps = {
 export const AccountsList: React.FC<AccountsListProps> = ({ userUid }) => {
   const [isOpened, setIsOpened] = React.useState(false)
   const [accounts, setAccounts] = React.useState<Array<Account>>([])
+  const [editableAccount, setEditableAccount] = React.useState<Account | null>(null)
 
   const refreshAccounts = () =>
     getAccounts(userUid).then(({ docs }) => {
@@ -66,16 +70,25 @@ export const AccountsList: React.FC<AccountsListProps> = ({ userUid }) => {
     refreshAccounts()
   }, [])
 
-  const handleSubmit = (account: CreateAccount) => {
-    createAccount(userUid, account).then(() => {
-      setIsOpened(false)
+  const handleSubmit = (account: CreateAccount | Account) => {
+    if ('uid' in account) {
+      updateAccount(userUid, account).then(() => {
+        setIsOpened(false)
 
-      return refreshAccounts()
-    })
+        return refreshAccounts()
+      })
+    } else {
+      createAccount(userUid, account).then(() => {
+        setIsOpened(false)
+
+        return refreshAccounts()
+      })
+    }
   }
 
-  const handleEdit = () => {
+  const handleEdit = (account: Account) => {
     setIsOpened(true)
+    setEditableAccount(account)
   }
 
   const handleDelete = (accountUid: string) => {
@@ -92,7 +105,7 @@ export const AccountsList: React.FC<AccountsListProps> = ({ userUid }) => {
 
       {isOpened ? (
         <Dialog onClose={() => setIsOpened(false)}>
-          <AddAccount onSubmit={handleSubmit} />
+          <AddAccount editableAccount={editableAccount} onSubmit={handleSubmit} />
         </Dialog>
       ) : null}
 

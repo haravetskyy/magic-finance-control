@@ -11,7 +11,7 @@ export const DialogDesktop: React.FC<Props> = props => {
     <div className='app-dialog-desktop'>
       <header className='app-dialog-desktop__header'>
         <Button variant='icon' onClick={props.onClose}>
-          x
+          <span className='far fa-times-circle' aria-hidden='true'></span>
         </Button>
       </header>
 

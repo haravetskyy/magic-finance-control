@@ -1,10 +1,21 @@
 import { Button } from 'App/components/Button'
 import { InputField } from 'App/components/InputField'
 import { SelectField } from 'App/components/SelectField'
-import { CreateAccount } from 'lib/accounts'
+import { Account, CreateAccount } from 'lib/accounts'
 import { isNonNullable } from 'lib/guards'
 import React from 'react'
 import './Accounts.scss'
+
+const toInitialState = (data: CreateAccount | null) => ({
+  name: {
+    value: data === null ? '' : data.name,
+    touched: false,
+  },
+  currency: {
+    value: data === null ? '' : data.currency,
+    touched: false,
+  },
+})
 
 const currencies = [
   { label: 'US Dollar', value: 'USD' },
@@ -13,20 +24,14 @@ const currencies = [
 ]
 
 type AddAccountProps = {
-  onSubmit: (account: CreateAccount) => void
+  editableAccount: Account | null
+  onSubmit: (account: CreateAccount | Account) => void
 }
 
 export const AddAccount: React.FC<AddAccountProps> = props => {
-  const [form, setForm] = React.useState({
-    name: {
-      value: '',
-      touched: false,
-    },
-    currency: {
-      value: '',
-      touched: false,
-    },
-  })
+  const initialState = toInitialState(props.editableAccount)
+
+  const [form, setForm] = React.useState(initialState)
 
   const handleNameChange: React.ChangeEventHandler<HTMLInputElement> = e =>
     setForm({
@@ -92,7 +97,11 @@ export const AddAccount: React.FC<AddAccountProps> = props => {
     }
 
     if (isFormValid) {
-      props.onSubmit(account)
+      if (props.editableAccount === null) {
+        props.onSubmit(account)
+      } else {
+        props.onSubmit({ uid: props.editableAccount.uid, ...account })
+      }
     }
 
     e.preventDefault()

@@ -22,8 +22,8 @@
   bottom: 0;
 
   border: 2px solid transparent;
-  border-radius: 7.5px;
-  box-shadow: 0px -16px 16px 0px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  box-shadow: 0 -1.6rem 1.6rem 0 rgba(0, 0, 0, 0.2);
 
   &__header {
     padding: 16px 24px;
@@ -42,13 +42,13 @@
 }
 
 .app-dialog-desktop {
-  width: 350px;
+  width: 35rem;
 
   background: #fff;
 
   border: 2px solid transparent;
   border-radius: 8px;
-  box-shadow: 12px 12px transparentize($color: #000000, $amount: 0.75);
+  box-shadow: 1.2rem 1.2rem transparentize($color: #000000, $amount: 0.75);
 
   &__header {
     padding-bottom: 8px;

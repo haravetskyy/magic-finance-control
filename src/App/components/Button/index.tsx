@@ -6,7 +6,7 @@ type Props = React.ButtonHTMLAttributes<HTMLButtonElement> & {
 }
 
 export const Button: React.FC<Props> = props => {
-  const getButtonStyle = () => {
+  const getButtonStyle = (): string => {
     switch (props.variant) {
       case 'primary':
         return 'app-button--primary'
@@ -18,8 +18,6 @@ export const Button: React.FC<Props> = props => {
         return 'app-button--danger'
       case 'icon':
         return 'app-button--icon'
-      default:
-        return null
     }
   }
 

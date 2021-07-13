@@ -36,7 +36,7 @@
 
   box-sizing: border-box;
 
-  height: 100px;
+  height: 10rem;
   width: 100%;
   padding: 16px;
 
@@ -48,19 +48,16 @@
     width: 100%;
   }
 
-  &__name,
-  &__currency {
+  &__name {
+    font-size: 2.2rem;
+    padding: 0 0 4px 0;
     font-family: 'Lato', sans-serif;
   }
 
-  &__name {
-    font-size: 1.75rem;
-    padding: 0px 0px 4px 0px;
-  }
-
   &__currency {
-    font-size: 1.25rem;
+    font-size: 1.4rem;
     color: #a8a8a8;
+    font-family: 'Cabin', sans-serif;
   }
 
   &__text-wrapper {
@@ -75,22 +72,19 @@
 
   &__button {
     padding: 0;
+    cursor: pointer;
 
-    img {
-      width: 2.75rem;
+    span {
+      color: #263238;
+      font-size: 2.6rem;
     }
   }
 
-  &__indent {
-    padding-top: 24px;
-    padding-bottom: 24px;
+  &__line {
     width: 100%;
-  }
-
-  &__divider-line {
-    border-bottom: 1px solid #7986cb;
-    width: 100%;
-    margin: 0 auto;
+    height: 2px;
+    border-width: 0;
+    background-color: #7986cb;
   }
 }
 
