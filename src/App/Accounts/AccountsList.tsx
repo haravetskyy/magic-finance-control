@@ -1,5 +1,6 @@
 import { Button } from 'App/components/Button'
 import { Dialog } from 'App/components/Dialog'
+import { Loader } from 'App/components/Loader'
 import {
   Account,
   createAccount,
@@ -8,6 +9,7 @@ import {
   removeAccount,
   updateAccount,
 } from 'lib/accounts'
+import { initial, RemoteData, success, pending, match } from 'lib/remoteData'
 import React from 'react'
 import { AddAccount } from './AddAccount'
 
@@ -53,18 +55,21 @@ type AccountsListProps = {
 
 export const AccountsList: React.FC<AccountsListProps> = ({ userUid }) => {
   const [isOpened, setIsOpened] = React.useState(false)
-  const [accounts, setAccounts] = React.useState<Array<Account>>([])
+  const [accounts, setAccounts] = React.useState<RemoteData<Array<Account>>>(initial())
   const [editableAccount, setEditableAccount] = React.useState<Account | null>(null)
 
-  const refreshAccounts = () =>
+  const refreshAccounts = () => {
+    setAccounts(pending())
+
     getAccounts(userUid).then(({ docs }) => {
       const accounts = docs.map(doc => {
         const { name, currency } = doc.data()
 
         return { uid: doc.id, name, currency }
       })
-      setAccounts(accounts)
+      setAccounts(success(accounts))
     })
+  }
 
   React.useEffect(() => {
     refreshAccounts()
@@ -97,6 +102,24 @@ export const AccountsList: React.FC<AccountsListProps> = ({ userUid }) => {
     }
   }
 
+  const renderAccounts = match(accounts, {
+    onInitial: () => <Loader />,
+    onPending: () => <Loader />,
+    onSuccess: ({ data }) => (
+      <div className='account-wrapper'>
+        {data.map(account => (
+          <AccountItem
+            key={account.uid}
+            account={account}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+          />
+        ))}
+      </div>
+    ),
+    onFailure: () => null,
+  })
+
   return (
     <>
       <Button variant='icon' onClick={() => setIsOpened(true)} className='add-account__button'>
@@ -109,16 +132,7 @@ export const AccountsList: React.FC<AccountsListProps> = ({ userUid }) => {
         </Dialog>
       ) : null}
 
-      <div className='account-wrapper'>
-        {accounts.map(account => (
-          <AccountItem
-            key={account.uid}
-            account={account}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-          />
-        ))}
-      </div>
+      {renderAccounts}
     </>
   )
 }
