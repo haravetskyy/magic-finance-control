@@ -1,123 +1,46 @@
-import React from 'react'
-import './AuthForm.scss'
 import { Button } from 'App/components/Button'
 import { InputField } from 'App/components/InputField'
-import { useState } from 'react'
-import { signIn } from 'lib/auth'
-import { createUser } from 'lib/auth'
-import { isNonNullable } from 'lib/guards'
-import isEmail from 'validator/es/lib/isEmail'
+import { useForm } from 'App/hooks/useForm'
+import { createUser, signIn } from 'lib/auth'
+import { of } from 'lib/Data'
+import { fromPredicate } from 'lib/Form'
+import { sequence, validationError, validators } from 'lib/Form/Validation'
 import { Link } from 'react-router-dom'
+import './AuthForm.scss'
 
 export const SignUpForm = () => {
-  const [form, setForm] = React.useState({
-    email: {
-      value: '',
-      touched: false,
+  const { fieldProps, handleSubmit } = useForm({
+    initialValues: {
+      email: '',
+      password: '',
+      confirmPassword: '',
     },
-    password: {
-      value: '',
-      touched: false,
-    },
-    confirmPassword: {
-      value: '',
-      touched: false,
-    },
+    onSubmit: createUser,
+    validationStrategy: 'onChange',
+    validators: values => ({
+      email: validators.email,
+      password: sequence(
+        validators.minLength(6),
+        validators.maxLength(24),
+        fromPredicate({
+          predicate: v => /[A-Z]/.test(v),
+          onFailure: () => of(validationError('Password must have at least one capital letter!')),
+        }),
+        fromPredicate({
+          predicate: v => /[0-9]/.test(v),
+          onFailure: () => of(validationError('Password must have at least one digit!')),
+        }),
+        fromPredicate({
+          predicate: v => /[a-z]/.test(v),
+          onFailure: () => of(validationError('Password must have at least one small letter!')),
+        }),
+      ),
+      confirmPassword: fromPredicate({
+        predicate: v => v === values.password,
+        onFailure: () => of(validationError('Passwords do not match!')),
+      }),
+    }),
   })
-
-  const handleEmailChange: React.ChangeEventHandler<HTMLInputElement> = e =>
-    setForm({
-      ...form,
-      email: {
-        ...form.email,
-        value: e.currentTarget.value,
-      },
-    })
-
-  const handleEmailBlur = () =>
-    setForm({
-      ...form,
-      email: {
-        ...form.email,
-        touched: true,
-      },
-    })
-
-  const handlePasswordChange: React.ChangeEventHandler<HTMLInputElement> = e =>
-    setForm({
-      ...form,
-      password: {
-        ...form.password,
-        value: e.currentTarget.value,
-      },
-    })
-
-  const handlePasswordBlur = () =>
-    setForm({
-      ...form,
-      password: {
-        ...form.password,
-        touched: true,
-      },
-    })
-
-  const isLengthValid = form.password.value.length >= 6 && form.password.value.length <= 24
-  const lengthErrorMessage = 'Password length must be between 6 and 24 characters!'
-
-  const hasOneCapitalLetter = /[A-Z]/.test(form.password.value)
-  const capitalLetterErrorMessage = 'Password must have at least one capital letter'
-
-  const hasOneDigit = /[0-9]/.test(form.password.value)
-  const digitErrorMessage = 'Password must have at least one digit'
-
-  const hasOneSmallLetter = /[a-z]/.test(form.password.value)
-  const smallLetterErrorMessage = 'Password must have at least one small letter'
-
-  const isPasswordValid = isLengthValid && hasOneCapitalLetter && hasOneDigit && hasOneSmallLetter
-
-  const passwordErrors = [
-    isLengthValid ? null : lengthErrorMessage,
-    hasOneCapitalLetter ? null : capitalLetterErrorMessage,
-    hasOneDigit ? null : digitErrorMessage,
-    hasOneSmallLetter ? null : smallLetterErrorMessage,
-  ].filter(isNonNullable)
-
-  const handleConfirmPasswordChange: React.ChangeEventHandler<HTMLInputElement> = e =>
-    setForm({
-      ...form,
-      confirmPassword: {
-        ...form.confirmPassword,
-        value: e.currentTarget.value,
-      },
-    })
-
-  const handleConfirmPasswordBlur = () =>
-    setForm({
-      ...form,
-      confirmPassword: {
-        ...form.confirmPassword,
-        touched: true,
-      },
-    })
-
-  const isEmailValid = isEmail(form.email.value)
-
-  const isConfirmPasswordValid = form.password.value === form.confirmPassword.value
-
-  const isFormValid = isEmailValid && isPasswordValid && isConfirmPasswordValid
-
-  const handleSubmit = (e: React.SyntheticEvent): void => {
-    const user = {
-      email: form.email.value,
-      password: form.password.value,
-    }
-
-    if (isFormValid) {
-      createUser(user)
-    }
-
-    e.preventDefault()
-  }
 
   return (
     <div className='auth-form__container'>
@@ -126,42 +49,19 @@ export const SignUpForm = () => {
           <div className='auth-form__mobile-wrapper'>
             <h1 className='auth-form__heading'>Sign Up</h1>
 
-            <InputField
-              errors={['Email is not valid']}
-              onBlur={handleEmailBlur}
-              onChange={handleEmailChange}
-              placeholder='Email Address'
-              touched={form.email.touched}
-              type='email'
-              valid={isEmailValid}
-              value={form.email.value}
-            />
+            <InputField {...fieldProps('email')} placeholder='Email Address' type='email' />
+
+            <InputField {...fieldProps('password')} placeholder='Password' type='password' />
 
             <InputField
-              errors={passwordErrors}
-              onBlur={handlePasswordBlur}
-              onChange={handlePasswordChange}
-              placeholder='Password'
-              touched={form.password.touched}
-              type='password'
-              valid={isPasswordValid}
-              value={form.password.value}
-            />
-
-            <InputField
-              errors={['Passwords do not match']}
-              onBlur={handleConfirmPasswordBlur}
-              onChange={handleConfirmPasswordChange}
+              {...fieldProps('confirmPassword')}
               placeholder='Confirm password'
-              touched={form.confirmPassword.touched}
               type='password'
-              valid={isConfirmPasswordValid}
-              value={form.confirmPassword.value}
             />
           </div>
 
           <div className='auth-form__mobile-wrapper'>
-            <Button variant='success' onClick={handleSubmit}>
+            <Button type='submit' variant='success' onClick={handleSubmit}>
               Submit
             </Button>
 
@@ -175,68 +75,19 @@ export const SignUpForm = () => {
   )
 }
 
-const isNonEmpty = (str: string) => str.length !== 0
-
 export const SignInForm = () => {
-  const [form, setForm] = useState({
-    email: {
-      value: '',
-      touched: false,
+  const { fieldProps, handleSubmit } = useForm({
+    initialValues: {
+      email: '',
+      password: '',
     },
-    password: {
-      value: '',
-      touched: false,
-    },
+    validators: () => ({
+      email: validators.nonBlankString(),
+      password: validators.nonBlankString(),
+    }),
+    validationStrategy: 'onBlur',
+    onSubmit: ({ email, password }) => signIn(email, password),
   })
-
-  const handleEmailChange: React.ChangeEventHandler<HTMLInputElement> = e =>
-    setForm({
-      ...form,
-      email: {
-        ...form.email,
-        value: e.currentTarget.value,
-      },
-    })
-
-  const handleEmailBlur = () =>
-    setForm({
-      ...form,
-      email: {
-        ...form.email,
-        touched: true,
-      },
-    })
-
-  const handlePasswordChange: React.ChangeEventHandler<HTMLInputElement> = e =>
-    setForm({
-      ...form,
-      password: {
-        ...form.password,
-        value: e.currentTarget.value,
-      },
-    })
-
-  const handlePasswordBlur = () =>
-    setForm({
-      ...form,
-      password: {
-        ...form.password,
-        touched: true,
-      },
-    })
-
-  const isEmailValid = isNonEmpty(form.email.value)
-  const isPasswordValid = isNonEmpty(form.password.value)
-
-  const isFormValid = isEmailValid && isPasswordValid
-
-  const handleSubmit = (e: React.SyntheticEvent): void => {
-    if (isFormValid) {
-      signIn(form.email.value, form.password.value)
-    }
-
-    e.preventDefault()
-  }
 
   return (
     <div className='auth-form__container'>
@@ -245,31 +96,13 @@ export const SignInForm = () => {
           <div className='auth-form__mobile-wrapper'>
             <h1 className='auth-form__heading'>Sign in</h1>
 
-            <InputField
-              errors={['This field is required!']}
-              onBlur={handleEmailBlur}
-              onChange={handleEmailChange}
-              placeholder='Email Address'
-              touched={form.email.touched}
-              type='email'
-              valid={isEmailValid}
-              value={form.email.value}
-            />
+            <InputField {...fieldProps('email')} placeholder='Email Address' type='email' />
 
-            <InputField
-              errors={['This field is required!']}
-              onBlur={handlePasswordBlur}
-              onChange={handlePasswordChange}
-              placeholder='Password'
-              touched={form.password.touched}
-              type='password'
-              valid={isPasswordValid}
-              value={form.password.value}
-            />
+            <InputField {...fieldProps('password')} placeholder='Password' type='password' />
           </div>
 
           <div className='auth-form__mobile-wrapper'>
-            <Button variant='success' onClick={handleSubmit}>
+            <Button type='submit' variant='success' onClick={handleSubmit}>
               Submit
             </Button>
 

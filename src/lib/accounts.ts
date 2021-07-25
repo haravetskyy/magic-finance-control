@@ -3,12 +3,14 @@ import { firestore } from './firebase'
 export type Account = {
   uid: string
   name: string
-  currency: string
+  currency: Currency
 }
+
+export type Currency = 'USD' | 'EUR' | 'UAH'
 
 export type CreateAccount = {
   name: string
-  currency: string
+  currency: Currency
 }
 
 export const createAccount = (userUID: string, account: CreateAccount) =>
