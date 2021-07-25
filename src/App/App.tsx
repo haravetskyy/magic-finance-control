@@ -1,13 +1,12 @@
+import { SignInForm, SignUpForm } from 'App/AuthForm'
+import { Loader } from 'App/components/Loader'
 import { auth, firestore } from 'lib/firebase'
-import { failure, initial, RemoteData, success, pending, match } from 'lib/remoteData'
-import React, { useEffect } from 'react'
+import { failure, initial, match, pending, RemoteData, success } from 'lib/remoteData'
+import React from 'react'
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import { AccountsList } from './Accounts'
 import './App.scss'
 import { NavBar } from './NavBar'
-import { SignInForm } from 'App/AuthForm'
-import { SignUpForm } from 'App/AuthForm'
-import { Loader } from 'App/components/Loader'
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 
 function App() {
   const [userId, setUserId] = React.useState<RemoteData<string>>(initial())
@@ -40,7 +39,7 @@ function App() {
         </div>
       </>
     ),
-    onFailure: () => <SignInForm />,
+    onFailure: () => <SignUpForm />,
   })
 
   return (

@@ -1,23 +1,23 @@
 import { Button } from 'App/components/Button'
 import { InputField } from 'App/components/InputField'
 import { SelectField } from 'App/components/SelectField'
-import { Account, CreateAccount } from 'lib/accounts'
-import { isNonNullable } from 'lib/guards'
+import { useForm } from 'App/hooks/useForm'
+import { Account, CreateAccount, Currency } from 'lib/accounts'
+import { validators } from 'lib/Form/Validation'
 import React from 'react'
 import './Accounts.scss'
 
-const toInitialState = (data: CreateAccount | null) => ({
-  name: {
-    value: data === null ? '' : data.name,
-    touched: false,
-  },
-  currency: {
-    value: data === null ? '' : data.currency,
-    touched: false,
-  },
+type FormValues = {
+  name: string
+  currency: Currency
+}
+
+const toFormValues = (data: CreateAccount | null): FormValues => ({
+  name: data === null ? '' : data.name,
+  currency: data === null ? ('' as Currency) : data.currency,
 })
 
-const currencies = [
+const currencies: Array<{ label: string; value: Currency }> = [
   { label: 'US Dollar', value: 'USD' },
   { label: 'Euro', value: 'EUR' },
   { label: 'Hryvnia', value: 'UAH' },
@@ -29,106 +29,34 @@ type AddAccountProps = {
 }
 
 export const AddAccount: React.FC<AddAccountProps> = props => {
-  const initialState = toInitialState(props.editableAccount)
-
-  const [form, setForm] = React.useState(initialState)
-
-  const handleNameChange: React.ChangeEventHandler<HTMLInputElement> = e =>
-    setForm({
-      ...form,
-      name: {
-        ...form.name,
-        value: e.currentTarget.value,
-      },
-    })
-
-  const handleNameBlur = () =>
-    setForm({
-      ...form,
-      name: {
-        ...form.name,
-        touched: true,
-      },
-    })
-
-  const handleCurrencyChange: React.ChangeEventHandler<HTMLSelectElement> = e =>
-    setForm({
-      ...form,
-      currency: {
-        ...form.currency,
-        value: e.currentTarget.value,
-      },
-    })
-
-  const handleCurrencyBlur = () =>
-    setForm({
-      ...form,
-      currency: {
-        ...form.currency,
-        touched: true,
-      },
-    })
-
-  const trimmedValue = form.name.value.trim()
-
-  const isNotEmpty = trimmedValue !== ''
-  const emptyErrorMessage = 'Account name must not be empty'
-
-  const isLengthValid = trimmedValue.length <= 18
-  const lengthErrorMessage = 'Account name length must be less than 18 characters!'
-
-  const isNameValid = isLengthValid && isNotEmpty
-
-  const nameErrors = [
-    isLengthValid ? null : lengthErrorMessage,
-    isNotEmpty ? null : emptyErrorMessage,
-  ].filter(isNonNullable)
-
-  const isCurrencyValid = form.currency.value !== ''
-
-  const currencyErrors = ['Currency is required']
-
-  const isFormValid = isNameValid && isCurrencyValid
-
-  const handleSubmit = (e: React.SyntheticEvent) => {
-    const account = {
-      name: form.name.value,
-      currency: form.currency.value,
-    }
-
-    if (isFormValid) {
+  const { fieldProps, handleSubmit } = useForm({
+    initialValues: toFormValues(props.editableAccount),
+    validators: () => ({
+      name: validators.maxLength(18),
+      currency: validators.nonBlankString<Currency>(),
+    }),
+    validationStrategy: 'onBlur',
+    onSubmit: values => {
       if (props.editableAccount === null) {
-        props.onSubmit(account)
+        props.onSubmit(values)
       } else {
-        props.onSubmit({ uid: props.editableAccount.uid, ...account })
+        props.onSubmit({ uid: props.editableAccount.uid, ...values })
       }
-    }
-
-    e.preventDefault()
-  }
+    },
+  })
 
   return (
     <form className='add-account-form'>
       <InputField
-        onChange={handleNameChange}
-        onBlur={handleNameBlur}
-        value={form.name.value}
-        touched={form.name.touched}
-        valid={isNameValid}
-        errors={nameErrors}
+        {...fieldProps('name')}
         className='add-account-form__input'
-        type='text'
         placeholder='Account name'
+        type='text'
       />
       <SelectField
-        onChange={handleCurrencyChange}
-        touched={form.currency.touched}
-        valid={isCurrencyValid}
-        errors={currencyErrors}
-        onBlur={handleCurrencyBlur}
-        value={form.currency.value}
-        options={currencies}
+        {...fieldProps('currency')}
         hiddenLabel='Choose a currency'
+        options={currencies}
       />
 
       <Button variant='primary' className='add-account-form__button' onClick={handleSubmit}>
