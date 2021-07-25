@@ -3,9 +3,7 @@ import './NavBar.scss'
 import { Button } from 'App/components/Button'
 import { auth } from 'lib/firebase'
 
-type Props = React.HTMLAttributes<HTMLDivElement>
-
-export const NavBar: React.FC<Props> = props => {
+export const NavBar: React.FC = () => {
   const [isOpened, setIsOpened] = React.useState(false)
 
   const handleLogOut = () => auth.signOut()
