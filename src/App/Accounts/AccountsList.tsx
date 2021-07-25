@@ -9,7 +9,7 @@ import {
   removeAccount,
   updateAccount,
 } from 'lib/accounts'
-import { initial, RemoteData, success, pending, match } from 'lib/remoteData'
+import { initial, match, pending, RemoteData, success } from 'lib/remoteData'
 import React from 'react'
 import { AddAccount } from './AddAccount'
 
@@ -50,10 +50,10 @@ export const AccountItem: React.FC<AccountProps> = props => {
 }
 
 type AccountsListProps = {
-  userUid: string
+  userId: string
 }
 
-export const AccountsList: React.FC<AccountsListProps> = ({ userUid }) => {
+export const AccountsList: React.FC<AccountsListProps> = ({ userId }) => {
   const [isOpened, setIsOpened] = React.useState(false)
   const [accounts, setAccounts] = React.useState<RemoteData<Array<Account>>>(initial())
   const [editableAccount, setEditableAccount] = React.useState<Account | null>(null)
@@ -61,29 +61,28 @@ export const AccountsList: React.FC<AccountsListProps> = ({ userUid }) => {
   const refreshAccounts = () => {
     setAccounts(pending())
 
-    getAccounts(userUid).then(({ docs }) => {
+    getAccounts(userId).then(({ docs }) => {
       const accounts = docs.map(doc => {
         const { name, currency } = doc.data()
 
         return { uid: doc.id, name, currency }
       })
+
       setAccounts(success(accounts))
     })
   }
 
-  React.useEffect(() => {
-    refreshAccounts()
-  }, [])
+  React.useEffect(refreshAccounts, [])
 
   const handleSubmit = (account: CreateAccount | Account) => {
     if ('uid' in account) {
-      updateAccount(userUid, account).then(() => {
+      updateAccount(userId, account).then(() => {
         setIsOpened(false)
 
         return refreshAccounts()
       })
     } else {
-      createAccount(userUid, account).then(() => {
+      createAccount(userId, account).then(() => {
         setIsOpened(false)
 
         return refreshAccounts()
@@ -98,7 +97,7 @@ export const AccountsList: React.FC<AccountsListProps> = ({ userUid }) => {
 
   const handleDelete = (accountUid: string) => {
     if (window.confirm('Are you sure you want to delete?')) {
-      removeAccount(userUid, accountUid).then(refreshAccounts)
+      removeAccount(userId, accountUid).then(refreshAccounts)
     }
   }
 

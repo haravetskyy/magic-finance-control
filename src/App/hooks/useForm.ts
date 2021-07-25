@@ -2,7 +2,7 @@ import { NonEmptyArray } from 'lib/Data/Array'
 import { pipe } from 'lib/Data/pipe'
 import { UnknownRecord } from 'lib/Data/Record'
 import { isFailure, isSuccess, validate, ValidationError, ValidationSchema } from 'lib/Form'
-import { Reducer, SyntheticEvent, useEffect, useReducer } from 'react'
+import { Reducer, SyntheticEvent, useReducer } from 'react'
 
 type UseFormOptions<T extends UnknownRecord> = {
   initialValues: T
@@ -57,8 +57,6 @@ export function useForm<T extends UnknownRecord>(options: UseFormOptions<T>) {
     | { id: 'Validate'; key: keyof T }
 
   const reducer: Reducer<FormState<T>, Action> = (state, action) => {
-    console.log(action)
-
     switch (action.id) {
       case 'Blur':
         return {
@@ -99,8 +97,6 @@ export function useForm<T extends UnknownRecord>(options: UseFormOptions<T>) {
   }
 
   const [formState, dispatch] = useReducer(reducer, initialState)
-
-  useEffect(() => console.log(formState), [formState])
 
   const fieldProps = <K extends keyof T>(key: K) => ({
     handleChange: (value: T[K]) => {

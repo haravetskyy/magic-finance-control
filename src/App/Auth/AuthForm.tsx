@@ -86,7 +86,7 @@ export const SignInForm = () => {
       password: validators.nonBlankString(),
     }),
     validationStrategy: 'onBlur',
-    onSubmit: ({ email, password }) => signIn(email, password),
+    onSubmit: signIn,
   })
 
   return (

@@ -20,5 +20,5 @@ export const createUser = (credentials: AuthCredentials) =>
     }
   })
 
-export const signIn = (email: string, password: string) =>
+export const signIn = ({ email, password }: AuthCredentials) =>
   auth.signInWithEmailAndPassword(email, password)

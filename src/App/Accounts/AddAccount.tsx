@@ -59,7 +59,11 @@ export const AddAccount: React.FC<AddAccountProps> = props => {
         options={currencies}
       />
 
-      <Button variant='primary' className='add-account-form__button' onClick={handleSubmit}>
+      <Button
+        type='submit'
+        variant='primary'
+        className='add-account-form__button'
+        onClick={handleSubmit}>
         Submit
       </Button>
     </form>
