@@ -7,6 +7,7 @@ import { signIn } from 'lib/auth'
 import { createUser } from 'lib/auth'
 import { isNonNullable } from 'lib/guards'
 import isEmail from 'validator/es/lib/isEmail'
+import { Link } from 'react-router-dom'
 
 export const SignUpForm = () => {
   const [form, setForm] = React.useState({
@@ -164,7 +165,9 @@ export const SignUpForm = () => {
               Submit
             </Button>
 
-            <p className='auth-form__redirection-text'>I already have account</p>
+            <Link to='/sign-in' className='auth-form__redirection-text'>
+              I already have account
+            </Link>
           </div>
         </form>
       </div>
@@ -270,7 +273,9 @@ export const SignInForm = () => {
               Submit
             </Button>
 
-            <p className='auth-form__redirection-text'>I don`t have account</p>
+            <Link to='/sign-up' className='auth-form__redirection-text'>
+              I don`t have account
+            </Link>
           </div>
         </form>
       </div>
