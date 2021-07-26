@@ -1,6 +1,7 @@
 import { Button } from 'App/components/Button'
 import { Dialog } from 'App/components/Dialog'
 import { Loader } from 'App/components/Loader'
+import { useRemoteData } from 'App/hooks/useRemoteData'
 import {
   Account,
   createAccount,
@@ -9,8 +10,8 @@ import {
   removeAccount,
   updateAccount,
 } from 'lib/accounts'
-import { initial, match, pending, RemoteData, success } from 'lib/remoteData'
-import React from 'react'
+import { match } from 'lib/remoteData'
+import { FC, useState } from 'react'
 import { AddAccount } from './AddAccount'
 
 type AccountProps = {
@@ -53,39 +54,23 @@ type AccountsListProps = {
   userId: string
 }
 
-export const AccountsList: React.FC<AccountsListProps> = ({ userId }) => {
-  const [isOpened, setIsOpened] = React.useState(false)
-  const [accounts, setAccounts] = React.useState<RemoteData<Array<Account>>>(initial())
-  const [editableAccount, setEditableAccount] = React.useState<Account | null>(null)
+export const AccountsList: FC<AccountsListProps> = ({ userId }) => {
+  const [isOpened, setIsOpened] = useState(false)
+  const [editableAccount, setEditableAccount] = useState<Account | null>(null)
 
-  const refreshAccounts = () => {
-    setAccounts(pending())
-
-    getAccounts(userId).then(({ docs }) => {
-      const accounts = docs.map(doc => {
-        const { name, currency } = doc.data()
-
-        return { uid: doc.id, name, currency }
-      })
-
-      setAccounts(success(accounts))
-    })
-  }
-
-  React.useEffect(refreshAccounts, [])
+  const [accounts, refreshAccounts] = useRemoteData(() => getAccounts(userId))
 
   const handleSubmit = (account: CreateAccount | Account) => {
     if ('uid' in account) {
       updateAccount(userId, account).then(() => {
         setIsOpened(false)
-
-        return refreshAccounts()
+        setEditableAccount(null)
+        refreshAccounts()
       })
     } else {
       createAccount(userId, account).then(() => {
         setIsOpened(false)
-
-        return refreshAccounts()
+        refreshAccounts()
       })
     }
   }

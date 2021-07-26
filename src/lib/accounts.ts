@@ -16,8 +16,19 @@ export type CreateAccount = {
 export const createAccount = (userUID: string, account: CreateAccount) =>
   firestore.collection('users').doc(userUID).collection('accounts').add(account)
 
-export const getAccounts = (userUID: string) =>
-  firestore.collection('users').doc(userUID).collection('accounts').get()
+export const getAccounts = (userUID: string): Promise<Array<Account>> =>
+  firestore
+    .collection('users')
+    .doc(userUID)
+    .collection('accounts')
+    .get()
+    .then(({ docs }) =>
+      docs.map(doc => {
+        const { name, currency } = doc.data()
+
+        return { uid: doc.id, name, currency }
+      }),
+    )
 
 export const removeAccount = (userUID: string, accountUID: string): Promise<void> =>
   firestore.collection('users').doc(userUID).collection('accounts').doc(accountUID).delete()
