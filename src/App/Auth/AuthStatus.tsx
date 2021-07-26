@@ -1,5 +1,5 @@
 import { auth, firestore } from 'lib/firebase'
-import { failure, initial, pending, RemoteData, success } from 'lib/remoteData'
+import { remoteData, RemoteData } from 'lib/remoteData'
 import { useEffect, useState } from 'react'
 
 type Props = {
@@ -7,20 +7,20 @@ type Props = {
 }
 
 export function AuthStatus(props: Props) {
-  const [userId, setUserId] = useState<RemoteData<string>>(initial())
+  const [userId, setUserId] = useState<RemoteData<string>>(remoteData.initial())
 
   useEffect(() => {
     auth.onAuthStateChanged(user => {
-      setUserId(pending())
+      setUserId(remoteData.pending())
 
       if (user !== null) {
         firestore
           .collection('users')
           .doc(user.uid)
           .get()
-          .then(({ id }) => setUserId(success(id)))
+          .then(({ id }) => setUserId(remoteData.success(id)))
       } else {
-        setUserId(failure(new Error('User is not logged in!')))
+        setUserId(remoteData.failure(new Error('User is not logged in!')))
       }
     })
   }, [])

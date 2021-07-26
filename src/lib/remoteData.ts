@@ -2,7 +2,7 @@ type Initial = {
   id: 'Initial'
 }
 
-export const initial = <A>(): RemoteData<A> => ({
+const initial = <A>(): RemoteData<A> => ({
   id: 'Initial',
 })
 
@@ -10,7 +10,7 @@ type Pending = {
   id: 'Pending'
 }
 
-export const pending = <A>(): RemoteData<A> => ({
+const pending = <A>(): RemoteData<A> => ({
   id: 'Pending',
 })
 
@@ -19,7 +19,7 @@ type Success<A> = {
   data: A
 }
 
-export const success = <A>(data: A): RemoteData<A> => ({
+const success = <A>(data: A): RemoteData<A> => ({
   id: 'Success',
   data,
 })
@@ -29,7 +29,7 @@ type Failure = {
   error: Error
 }
 
-export const failure = <A>(error: Error): RemoteData<A> => ({
+const failure = <A>(error: Error): RemoteData<A> => ({
   id: 'Failure',
   error,
 })
@@ -41,6 +41,13 @@ type Pattern<A, B> = {
   onPending: (rd: Pending) => B
   onSuccess: (rd: Success<A>) => B
   onFailure: (rd: Failure) => B
+}
+
+export const remoteData = {
+  initial,
+  pending,
+  success,
+  failure,
 }
 
 export const match = <A, B>(rd: RemoteData<A>, pattern: Pattern<A, B>): B => {
