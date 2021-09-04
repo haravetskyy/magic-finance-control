@@ -1,6 +1,6 @@
 import { Button } from 'App/components/Button'
-import { InputField } from 'App/components/InputField'
-import { SelectField } from 'App/components/SelectField'
+import { InputField } from 'App/components/Input'
+import { SelectField } from 'App/components/Select'
 import { useForm } from 'App/hooks/useForm'
 import { Account, CreateAccount, Currency } from 'lib/accounts'
 import { validators } from 'lib/Form/Validation'

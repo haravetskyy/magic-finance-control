@@ -1,27 +1,34 @@
-import { Error } from 'App/components/Error'
-import { Input } from 'App/components/Input'
 import { FieldProps } from 'App/hooks/useForm'
 import { className } from 'lib/className'
 import { ChangeEventHandler } from 'react'
-import './InputField.scss'
+import './Textarea.scss'
+import { Error } from 'App/components/Error'
 
-type Props = React.InputHTMLAttributes<HTMLInputElement> & FieldProps<string>
+type Props = React.InputHTMLAttributes<HTMLTextAreaElement>
 
-export const InputField: React.FC<Props> = props => {
+export const TextArea: React.FC<Props> = props => {
+  const classNames = className([props.className, 'app-textarea'])
+
+  return <textarea {...props} className={classNames} />
+}
+
+type TextAreaFieldProps = Props & FieldProps<string>
+
+export const TextAreaField: React.FC<TextAreaFieldProps> = props => {
   const { errors, handleBlur, handleChange, touched, value, ...inputProps } = props
 
   const classNames = className([
     props.className,
-    errors !== undefined && touched ? 'app-input--invalid' : null,
+    errors !== undefined && touched ? 'app-textarea--invalid' : null,
   ])
 
-  const onChange: ChangeEventHandler<HTMLInputElement> = event => {
+  const onChange: ChangeEventHandler<HTMLTextAreaElement> = event => {
     handleChange(event.currentTarget.value)
   }
 
   return (
     <div className='app-field'>
-      <Input
+      <TextArea
         {...inputProps}
         className={classNames}
         onBlur={handleBlur}

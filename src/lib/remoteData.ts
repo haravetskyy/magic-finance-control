@@ -36,6 +36,8 @@ const failure = <A>(error: Error): RemoteData<A> => ({
 
 export type RemoteData<A> = Initial | Pending | Success<A> | Failure
 
+const isSuccess = <A>(rd: RemoteData<A>): rd is Success<A> => rd.id === 'Success'
+
 type Pattern<A, B> = {
   onInitial: (rd: Initial) => B
   onPending: (rd: Pending) => B
@@ -48,6 +50,7 @@ export const remoteData = {
   pending,
   success,
   failure,
+  isSuccess,
 }
 
 export const match = <A, B>(rd: RemoteData<A>, pattern: Pattern<A, B>): B => {
