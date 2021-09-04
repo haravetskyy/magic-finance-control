@@ -1,5 +1,5 @@
 import { Button } from 'App/components/Button'
-import { InputField } from 'App/components/InputField'
+import { InputField } from 'App/components/Input'
 import { useForm } from 'App/hooks/useForm'
 import { createUser, signIn } from 'lib/auth'
 import { of } from 'lib/Data'

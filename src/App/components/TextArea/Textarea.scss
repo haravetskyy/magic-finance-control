@@ -1,0 +1,30 @@
+.app-textarea {
+  height: 10rem;
+  width: 100%;
+  resize: none;
+  border: none;
+  border-bottom: 3px solid #45526c;
+  padding: 18px;
+  font-size: 1.4rem;
+  font-family: 'Lato', sans-serif;
+  background: #f4f9f9;
+  margin-bottom: 18px;
+
+  &::placeholder {
+    font-size: 1.4rem;
+    font-family: 'Lato', sans-serif;
+  }
+
+  &:hover,
+  &:focus {
+    border-color: #1e6f5c;
+  }
+  &--invalid {
+    border-color: #d32f2f;
+
+    &:hover,
+    &:focus {
+      border-color: #d32f2f;
+    }
+  }
+}
