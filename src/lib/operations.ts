@@ -1,4 +1,5 @@
-import { Account, Currency } from './accounts'
+import { SelectOptions } from 'App/components/Select'
+import { Currency } from './accounts'
 import { firestore } from './firebase'
 
 // TODO:
@@ -16,6 +17,11 @@ export type Category =
   | 'Pet'
   | 'Charity'
   | 'Uncategorized'
+
+export const categories: SelectOptions<Category> = [
+  { label: 'Food', value: 'Food' },
+  { label: 'Transport', value: 'Transport' },
+]
 
 export type CreateOperation = {
   amount: number

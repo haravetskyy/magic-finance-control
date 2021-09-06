@@ -1,5 +1,5 @@
 import { Button } from 'App/components/Button'
-import { InputField } from 'App/components/Input'
+import { TextField } from 'App/components/Input'
 import { useForm } from 'App/hooks/useForm'
 import { createUser, signIn } from 'lib/auth'
 import { of } from 'lib/Data'
@@ -49,11 +49,11 @@ export const SignUpForm = () => {
           <div className='auth-form__mobile-wrapper'>
             <h1 className='auth-form__heading'>Sign Up</h1>
 
-            <InputField {...fieldProps('email')} placeholder='Email Address' type='email' />
+            <TextField {...fieldProps('email')} placeholder='Email Address' type='email' />
 
-            <InputField {...fieldProps('password')} placeholder='Password' type='password' />
+            <TextField {...fieldProps('password')} placeholder='Password' type='password' />
 
-            <InputField
+            <TextField
               {...fieldProps('confirmPassword')}
               placeholder='Confirm password'
               type='password'
@@ -96,9 +96,9 @@ export const SignInForm = () => {
           <div className='auth-form__mobile-wrapper'>
             <h1 className='auth-form__heading'>Sign in</h1>
 
-            <InputField {...fieldProps('email')} placeholder='Email Address' type='email' />
+            <TextField {...fieldProps('email')} placeholder='Email Address' type='email' />
 
-            <InputField {...fieldProps('password')} placeholder='Password' type='password' />
+            <TextField {...fieldProps('password')} placeholder='Password' type='password' />
           </div>
 
           <div className='auth-form__mobile-wrapper'>

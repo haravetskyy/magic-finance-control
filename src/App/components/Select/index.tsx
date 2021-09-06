@@ -1,71 +1,63 @@
-import { className as cn } from 'lib/className'
-import { prepend } from 'lib/Data/Array'
-import React from 'react'
-import './Select.scss'
 import { Error } from 'App/components/Error'
+import { CommonProps } from 'App/components/types'
 import { FieldProps } from 'App/hooks/useForm'
-import { className } from 'lib/className'
-import { ChangeEventHandler, ComponentProps } from 'react'
+import { className, className as cn } from 'lib/className'
+import { prepend } from 'lib/Data/Array'
+import { ChangeEventHandler } from 'react'
+import './Select.scss'
 
-type SelectProps<T extends string> = React.SelectHTMLAttributes<HTMLSelectElement> & {
-  options: Array<{
-    label: string
-    value: T
-  }>
+export type SelectOptions<T extends string> = Array<{ label: string; value: T }>
+
+type SelectProps<T extends string> = CommonProps & {
   hiddenLabel: string
+  onBlur: () => void
+  onChange: (value: T) => void
+  options: SelectOptions<T>
+  value: T
 }
 
-export function Select<T extends string>({
-  options,
-  hiddenLabel,
-  className,
-  ...props
-}: SelectProps<T>) {
+export function Select<T extends string>(props: SelectProps<T>) {
+  const { hiddenLabel, ...selectProps } = props
+
   const placeholder = (
     <option hidden key='hidden-label'>
       {hiddenLabel}
     </option>
   )
 
-  const classNames = cn([className, 'app-select'])
+  const classNames = cn([props.className, 'app-select'])
 
-  const children = options.map(({ label, value }, key) => (
+  const children = props.options.map(({ label, value }, key) => (
     <option value={value} key={key}>
       {label}
     </option>
   ))
 
+  const handleChange: ChangeEventHandler<HTMLSelectElement> = event => {
+    selectProps.onChange(event.currentTarget.value as T)
+  }
+
   return (
-    <select className={classNames} {...props}>
+    <select {...selectProps} className={classNames} onChange={handleChange}>
       {prepend(children, placeholder)}
     </select>
   )
 }
 
-type SelectFieldProps<T extends string> = ComponentProps<typeof Select> & FieldProps<T>
+type SelectFieldProps<T extends string> = SelectProps<T> & FieldProps<T>
 
 export function SelectField<T extends string>(props: SelectFieldProps<T>) {
-  const { errors, handleBlur, handleChange, touched, value, ...selectProps } = props
+  const { errors, touched, ...selectProps } = props
 
   const classNames = className([
     props.className,
     errors !== undefined && touched ? 'app-select--invalid' : null,
   ])
 
-  const onChange: ChangeEventHandler<HTMLSelectElement> = event => {
-    handleChange(event.currentTarget.value as T)
-  }
-
   return (
     <div className='app-field'>
-      <Select
-        {...selectProps}
-        className={classNames}
-        onBlur={handleBlur}
-        onChange={onChange}
-        value={value}
-      />
-      {props.errors && props.errors.map((error, key) => <Error key={key}>{error.message}</Error>)}
+      <Select<T> {...selectProps} className={classNames} />
+      {errors && errors.map((error, key) => <Error key={key}>{error.message}</Error>)}
     </div>
   )
 }

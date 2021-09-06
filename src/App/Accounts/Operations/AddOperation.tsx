@@ -1,15 +1,14 @@
-import './Operations.scss'
-import { Input, InputField } from 'App/components/Input'
-import { Select, SelectField } from 'App/components/Select'
 import { Button } from 'App/components/Button'
-import { TextArea, TextAreaField } from 'App/components/TextArea'
+import { DateField, NumberField } from 'App/components/Input'
+import { SelectField } from 'App/components/Select'
+import { TextAreaField } from 'App/components/TextArea'
 import { useForm } from 'App/hooks/useForm'
-import { Currency } from 'lib/accounts'
-import { createOperation } from 'lib/operations'
+import { currencies, Currency } from 'lib/accounts'
+import { of } from 'lib/Data/Array'
+import { fromPredicate, validationError } from 'lib/Form'
+import { categories, Category, createOperation } from 'lib/operations'
 import { FC } from 'react'
-import { fromPredicate, sequence, validationError } from 'lib/Form'
-import { of } from 'lib/Data'
-import { Error } from 'App/components/Error'
+import './Operations.scss'
 
 type Props = {
   userId: string
@@ -17,27 +16,11 @@ type Props = {
 }
 
 export const AddOperation: FC<Props> = props => {
-  const currencies = [
-    { label: 'US Dollar', value: 'USD' },
-    { label: 'Euro', value: 'EUR' },
-    { label: 'Hryvnia', value: 'UAH' },
-  ]
-
-  const accounts = [
-    { label: 'Trip to US', value: 'us' },
-    { label: 'New computer', value: 'pc' },
-  ]
-
-  const categories = [
-    { label: 'Subscribtions', value: 'sub' },
-    { label: 'Medicine', value: 'med' },
-  ]
-
   const { fieldProps, handleSubmit } = useForm({
     initialValues: {
       amount: 0,
       currency: '' as Currency,
-      category: 'Uncategorized' as const,
+      category: 'Uncategorized' as Category,
       date: new Date(),
       description: '',
     },
@@ -46,42 +29,27 @@ export const AddOperation: FC<Props> = props => {
         .then(console.log)
         .catch(console.error),
     validationStrategy: 'onBlur',
-    validators: values => ({
-      amount:
-        // sequence(
-        // fromPredicate({
-        //   predicate: v => typeof v === 'number',
-        //   onFailure: () => of(validationError('Amount must be a number')),
-        // }),
-        fromPredicate({
-          predicate: v => v !== 0,
-          onFailure: () => of(validationError('Amount must be greater or lower than 0')),
-        }),
-      // ),
+    validators: _ => ({
+      amount: fromPredicate({
+        predicate: v => v !== 0,
+        onFailure: () => of(validationError('Amount must not be equal to 0!')),
+      }),
+      date: fromPredicate({
+        predicate: v => Number(v) <= Date.now(),
+        onFailure: () => of(validationError('Date must be smaller or equal to current date!')),
+      }),
     }),
   })
 
-  // TODO:
-
-  // 1. Валидация на тип (намбер) и на то чтоб значение не являлось нулем
-  // 2. Нет валидации, так как валюта по умолчанию уже выбрана
-  // 3. Валидация на выбор категории в общем (поле не может быть не тронутым)
-  // 4. Дата по умолчанию уже выбрана
-  // 5. Не обязательное поле
-
   return (
     <form className='operation-form__container'>
-      <InputField {...fieldProps('amount')} placeholder='Amount' type='number' id='amount' />
+      <NumberField {...fieldProps('amount')} placeholder='Amount' id='amount' />
 
       <SelectField {...fieldProps('currency')} hiddenLabel='Currency' options={currencies} />
 
       <SelectField {...fieldProps('category')} hiddenLabel='Category' options={categories} />
 
-      <InputField
-        {...(fieldProps('date') as any)}
-        className='operation-form__date-input'
-        type='date'
-      />
+      <DateField {...fieldProps('date')} className='operation-form__date-input' />
 
       <TextAreaField {...fieldProps('description')} placeholder='Description' />
 

@@ -6,12 +6,12 @@ import { useRouteMatch } from 'react-router-dom'
 import { AddOperation } from './Operations/AddOperation'
 
 type RouteParams = { accountId: string }
+
 type Props = { userId: string }
 
 export const Account: FC<Props> = props => {
   const [isOpened, setIsOpened] = React.useState(false)
   const { params } = useRouteMatch<RouteParams>()
-  console.log(params.accountId)
 
   return (
     <>

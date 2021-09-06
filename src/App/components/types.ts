@@ -1,5 +1,4 @@
-export type FieldProps = {
-  errors: Array<string>
-  touched: boolean
-  valid: boolean
+export type CommonProps = {
+  className?: string
+  id?: string
 }
