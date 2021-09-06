@@ -14,8 +14,10 @@ export function useRemoteData<A>(action: () => Promise<A>): [RemoteData<A>, () =
     action()
       .then(data => setData(remoteData.success(data)))
       .catch(error => setData(remoteData.failure(error)))
+    // eslint-disable-next-line
   }, [])
 
+  // eslint-disable-next-line
   useEffect(toRemoteData, [updateCounter])
 
   return [data, forceUpdate]

@@ -1,3 +1,4 @@
+import { SelectOptions } from 'App/components/Select'
 import { firestore } from './firebase'
 
 export type Account = {
@@ -7,6 +8,12 @@ export type Account = {
 }
 
 export type Currency = 'USD' | 'EUR' | 'UAH'
+
+export const currencies: SelectOptions<Currency> = [
+  { label: 'US Dollar', value: 'USD' },
+  { label: 'Euro', value: 'EUR' },
+  { label: 'Hryvnia', value: 'UAH' },
+]
 
 export type CreateAccount = {
   name: string

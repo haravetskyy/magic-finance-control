@@ -1,41 +1,45 @@
+import { Error } from 'App/components/Error'
+import { CommonProps } from 'App/components/types'
 import { FieldProps } from 'App/hooks/useForm'
 import { className } from 'lib/className'
 import { ChangeEventHandler } from 'react'
 import './Textarea.scss'
-import { Error } from 'App/components/Error'
 
-type Props = React.InputHTMLAttributes<HTMLTextAreaElement>
-
-export const TextArea: React.FC<Props> = props => {
-  const classNames = className([props.className, 'app-textarea'])
-
-  return <textarea {...props} className={classNames} />
+type TextAreaProps = CommonProps & {
+  onBlur: () => void
+  onChange: (value: string) => void
+  placeholder?: string
+  value: string | null
+  cols?: number
+  rows?: number
 }
 
-type TextAreaFieldProps = Props & FieldProps<string>
+export function TextArea(props: TextAreaProps) {
+  const classNames = className([props.className, 'app-textarea'])
 
-export const TextAreaField: React.FC<TextAreaFieldProps> = props => {
-  const { errors, handleBlur, handleChange, touched, value, ...inputProps } = props
+  const handleChange: ChangeEventHandler<HTMLTextAreaElement> = event => {
+    props.onChange(event.currentTarget.value)
+  }
+
+  return (
+    <textarea {...props} className={classNames} onChange={handleChange} value={props.value || ''} />
+  )
+}
+
+type TextAreaFieldProps = TextAreaProps & FieldProps<string>
+
+export function TextAreaField(props: TextAreaFieldProps) {
+  const { errors, touched, ...textAreaProps } = props
 
   const classNames = className([
     props.className,
     errors !== undefined && touched ? 'app-textarea--invalid' : null,
   ])
 
-  const onChange: ChangeEventHandler<HTMLTextAreaElement> = event => {
-    handleChange(event.currentTarget.value)
-  }
-
   return (
     <div className='app-field'>
-      <TextArea
-        {...inputProps}
-        className={classNames}
-        onBlur={handleBlur}
-        onChange={onChange}
-        value={value}
-      />
-      {props.errors && props.errors.map((error, key) => <Error key={key}>{error.message}</Error>)}
+      <TextArea className={classNames} {...textAreaProps} />
+      {errors && errors.map((error, key) => <Error key={key}>{error.message}</Error>)}
     </div>
   )
 }

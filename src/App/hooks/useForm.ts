@@ -18,8 +18,8 @@ type FieldState<T> = {
 }
 
 export type FieldProps<T> = FieldState<T> & {
-  handleBlur: () => void
-  handleChange: (value: T) => void
+  onBlur: () => void
+  onChange: (value: T) => void
 }
 
 type FormState<T extends UnknownRecord> = {
@@ -98,15 +98,15 @@ export function useForm<T extends UnknownRecord>(options: UseFormOptions<T>) {
 
   const [formState, dispatch] = useReducer(reducer, initialState)
 
-  const fieldProps = <K extends keyof T>(key: K) => ({
-    handleChange: (value: T[K]) => {
+  const fieldProps = <K extends keyof T>(key: K): FieldProps<T[K]> => ({
+    onChange: (value: T[K]) => {
       dispatch({ id: 'Change', key, value })
 
       if (validationStrategy === 'onChange') {
         dispatch({ id: 'Validate', key })
       }
     },
-    handleBlur: () => {
+    onBlur: () => {
       dispatch({ id: 'Blur', key })
 
       if (validationStrategy === 'onBlur') {
@@ -121,8 +121,8 @@ export function useForm<T extends UnknownRecord>(options: UseFormOptions<T>) {
     const result = pipe(values, validate(validators))
 
     for (const key in values) {
-      fieldProps(key).handleChange(values[key])
-      fieldProps(key).handleBlur()
+      fieldProps(key).onChange(values[key])
+      fieldProps(key).onBlur()
     }
 
     if (isSuccess(result)) {

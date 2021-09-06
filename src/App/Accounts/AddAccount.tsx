@@ -1,8 +1,8 @@
 import { Button } from 'App/components/Button'
-import { InputField } from 'App/components/Input'
+import { TextField } from 'App/components/Input'
 import { SelectField } from 'App/components/Select'
 import { useForm } from 'App/hooks/useForm'
-import { Account, CreateAccount, Currency } from 'lib/accounts'
+import { Account, CreateAccount, currencies, Currency } from 'lib/accounts'
 import { validators } from 'lib/Form/Validation'
 import React from 'react'
 import './Accounts.scss'
@@ -16,12 +16,6 @@ const toFormValues = (data: CreateAccount | null): FormValues => ({
   name: data === null ? '' : data.name,
   currency: data === null ? ('' as Currency) : data.currency,
 })
-
-const currencies: Array<{ label: string; value: Currency }> = [
-  { label: 'US Dollar', value: 'USD' },
-  { label: 'Euro', value: 'EUR' },
-  { label: 'Hryvnia', value: 'UAH' },
-]
 
 type AddAccountProps = {
   editableAccount: Account | null
@@ -47,11 +41,10 @@ export const AddAccount: React.FC<AddAccountProps> = props => {
 
   return (
     <form className='add-account-form'>
-      <InputField
+      <TextField
         {...fieldProps('name')}
         className='add-account-form__input'
         placeholder='Account name'
-        type='text'
       />
       <SelectField
         {...fieldProps('currency')}
