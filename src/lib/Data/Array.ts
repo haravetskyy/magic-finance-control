@@ -11,3 +11,7 @@ export function of<A>(a: A): NonEmptyArray<A> {
 export function isNonEmpty<A>(as: Array<A>): as is NonEmptyArray<A> {
   return as.length > 0
 }
+
+export function head<A>(as: Array<A>): A | null {
+  return as[0] || null
+}

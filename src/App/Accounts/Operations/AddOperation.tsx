@@ -6,28 +6,28 @@ import { useForm } from 'App/hooks/useForm'
 import { currencies, Currency } from 'lib/accounts'
 import { of } from 'lib/Data/Array'
 import { fromPredicate, validationError } from 'lib/Form'
-import { categories, Category, createOperation } from 'lib/operations'
+import { categories, Category, CreateOperation, Operation } from 'lib/operations'
 import { FC } from 'react'
 import './Operations.scss'
 
 type Props = {
-  userId: string
-  accountId: string
+  onSubmit: (operation: CreateOperation) => void
+  editableOperation: Operation | null
 }
+
+const toFormValues = (data: Operation | null): CreateOperation =>
+  data || {
+    amount: 0,
+    currency: '' as Currency,
+    category: 'Uncategorized' as Category,
+    date: new Date(),
+    description: '',
+  }
 
 export const AddOperation: FC<Props> = props => {
   const { fieldProps, handleSubmit } = useForm({
-    initialValues: {
-      amount: 0,
-      currency: '' as Currency,
-      category: 'Uncategorized' as Category,
-      date: new Date(),
-      description: '',
-    },
-    onSubmit: operation =>
-      createOperation(props.userId, props.accountId, operation)
-        .then(console.log)
-        .catch(console.error),
+    initialValues: toFormValues(props.editableOperation),
+    onSubmit: props.onSubmit,
     validationStrategy: 'onBlur',
     validators: _ => ({
       amount: fromPredicate({
