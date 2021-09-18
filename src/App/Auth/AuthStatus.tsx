@@ -1,3 +1,4 @@
+import { head } from 'lib/Data/Array'
 import { auth, firestore } from 'lib/firebase'
 import { remoteData, RemoteData } from 'lib/remoteData'
 import { useEffect, useState } from 'react'
@@ -16,9 +17,17 @@ export function AuthStatus(props: Props) {
       if (user !== null) {
         firestore
           .collection('users')
-          .doc(user.uid)
+          .where('uid', '==', user.uid)
           .get()
-          .then(({ id }) => setUserId(remoteData.success(id)))
+          .then(result => {
+            const user = head(result.docs)
+
+            if (user) {
+              setUserId(remoteData.success(user.id))
+            } else {
+              setUserId(remoteData.failure(new Error('User was not found!')))
+            }
+          })
       } else {
         setUserId(remoteData.failure(new Error('User is not logged in!')))
       }
