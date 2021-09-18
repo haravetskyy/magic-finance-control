@@ -5,20 +5,22 @@ export function useRemoteData<A>(action: () => Promise<A>): [RemoteData<A>, () =
   const [data, setData] = useState(remoteData.initial<A>())
 
   const [updateCounter, setUpdateCounter] = useState(0)
+  const [isActive, setIsActive] = useState(true)
 
   const forceUpdate = useCallback(() => setUpdateCounter(c => c + 1), [])
 
-  const toRemoteData = useCallback(() => {
+  useEffect(() => {
     setData(remoteData.pending())
 
     action()
-      .then(data => setData(remoteData.success(data)))
+      .then(data => {
+        if (isActive) setData(remoteData.success(data))
+      })
       .catch(error => setData(remoteData.failure(error)))
-    // eslint-disable-next-line
-  }, [])
 
-  // eslint-disable-next-line
-  useEffect(toRemoteData, [updateCounter])
+    return () => setIsActive(false)
+    // eslint-disable-next-line
+  }, [updateCounter])
 
   return [data, forceUpdate]
 }
