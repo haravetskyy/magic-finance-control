@@ -1,5 +1,5 @@
 import { remoteData } from 'lib/remoteData'
-import { BrowserRouter, Switch } from 'react-router-dom'
+import { BrowserRouter, Redirect, Switch } from 'react-router-dom'
 import { AccountsList } from './Accounts'
 import { Account } from './Accounts/Account'
 import './App.scss'
@@ -21,8 +21,19 @@ function App() {
             {userId => (
               <>
                 {remoteData.isSuccess(userId) && <NavBar />}
-                <ProtectedRoute authStatus={userId} exact path='/' component={Home} />
-                <ProtectedRoute authStatus={userId} exact path='/:accountId' component={Account} />
+                <ProtectedRoute
+                  authStatus={userId}
+                  exact
+                  path='/'
+                  component={() => <Redirect to='/accounts' />}
+                />
+                <ProtectedRoute authStatus={userId} exact path='/accounts' component={Home} />
+                <ProtectedRoute
+                  authStatus={userId}
+                  exact
+                  path='/accounts/:accountId'
+                  component={Account}
+                />
                 <LoginRoute authStatus={userId} exact path='/sign-in' component={SignInForm} />
                 <LoginRoute authStatus={userId} exact path='/sign-up' component={SignUpForm} />
               </>

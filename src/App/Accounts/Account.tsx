@@ -75,7 +75,7 @@ export const Account: FC<Props> = props => {
 
   return (
     <>
-      {operationsList}
+      <div className='app__container'>{operationsList}</div>
 
       <Button variant='icon' onClick={() => setIsOpened(true)} className='add-account__button'>
         +
