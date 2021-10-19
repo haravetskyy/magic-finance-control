@@ -9,8 +9,6 @@ type Props = Omit<RouteProps, 'children' | 'component' | 'render'> & {
 }
 
 export const ProtectedRoute: FC<Props> = ({ authStatus, ...props }) => {
-  console.log(props)
-
   return match(authStatus, {
     onInitial: () => <Loader />,
     onPending: () => <Loader />,

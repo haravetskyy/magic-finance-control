@@ -31,7 +31,7 @@ export const OperationItem: React.FC<OperationProps> = props => {
           <Button
             className='app-operation__button'
             variant='icon'
-            onClick={isOpened ? () => setIsOpened(false) : () => setIsOpened(true)}>
+            onClick={() => setIsOpened(!isOpened)}>
             <span className='fas fa-info-circle'></span>
           </Button>
           <Button
@@ -51,7 +51,7 @@ export const OperationItem: React.FC<OperationProps> = props => {
 
       {isOpened ? (
         <>
-          <hr className='app-operation__horizontal-line app-operation__horizontal-line--secondary'></hr>
+          <hr className='app-operation__horizontal-line app-operation__horizontal-line--secondary' />
 
           <p id='description' className='app-operation__description'>
             {props.operation.description}
@@ -59,7 +59,7 @@ export const OperationItem: React.FC<OperationProps> = props => {
         </>
       ) : null}
 
-      <hr className='app-operation__horizontal-line'></hr>
+      <hr className='app-operation__horizontal-line' />
     </div>
   )
 }
