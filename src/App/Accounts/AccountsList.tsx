@@ -25,7 +25,7 @@ export const AccountItem: React.FC<AccountProps> = props => {
   return (
     <div className='app-account'>
       <div className='app-account__container'>
-        <Link to={`/${props.account.uid}`} className='app-account__text-wrapper'>
+        <Link to={`/accounts/${props.account.uid}`} className='app-account__text-wrapper'>
           <h3 className='app-account__name'>{props.account.name}</h3>
           <h4 className='app-account__currency'>{props.account.currency}</h4>
         </Link>

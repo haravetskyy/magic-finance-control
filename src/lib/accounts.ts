@@ -7,12 +7,12 @@ export type Account = {
   currency: Currency
 }
 
-export type Currency = 'USD' | 'EUR' | 'UAH'
+export type Currency = '$' | '€' | '₴'
 
 export const currencies: SelectOptions<Currency> = [
-  { label: 'US Dollar', value: 'USD' },
-  { label: 'Euro', value: 'EUR' },
-  { label: 'Hryvnia', value: 'UAH' },
+  { label: 'US Dollar', value: '$' },
+  { label: 'Euro', value: '€' },
+  { label: 'Hryvnia', value: '₴' },
 ]
 
 export type CreateAccount = {

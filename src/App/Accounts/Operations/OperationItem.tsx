@@ -1,4 +1,5 @@
 import { Button } from 'App/components/Button'
+import { Dialog } from 'App/components/Dialog'
 import { Operation } from 'lib/operations'
 import React from 'react'
 
@@ -11,6 +12,8 @@ type OperationProps = {
 const dateToString = (date: Date): string => date.toISOString().substring(0, 10)
 
 export const OperationItem: React.FC<OperationProps> = props => {
+  const [isOpened, setIsOpened] = React.useState(false)
+
   return (
     <div className='app-operation'>
       <div className='app-operation__container'>
@@ -28,6 +31,12 @@ export const OperationItem: React.FC<OperationProps> = props => {
           <Button
             className='app-operation__button'
             variant='icon'
+            onClick={isOpened ? () => setIsOpened(false) : () => setIsOpened(true)}>
+            <span className='fas fa-info-circle'></span>
+          </Button>
+          <Button
+            className='app-operation__button'
+            variant='icon'
             onClick={() => props.onEdit(props.operation)}>
             <span className='far fa-edit'></span>
           </Button>
@@ -38,10 +47,19 @@ export const OperationItem: React.FC<OperationProps> = props => {
             <span className='fas fa-eraser'></span>
           </Button>
         </div>
-        <p id='description' className='app-operation__description'>
-          {props.operation.description}
-        </p>
       </div>
+
+      {isOpened ? (
+        <>
+          <hr className='app-operation__horizontal-line app-operation__horizontal-line--secondary'></hr>
+
+          <p id='description' className='app-operation__description'>
+            {props.operation.description}
+          </p>
+        </>
+      ) : null}
+
+      <hr className='app-operation__horizontal-line'></hr>
     </div>
   )
 }

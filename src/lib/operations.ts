@@ -17,6 +17,14 @@ export type Category =
 export const categories: SelectOptions<Category> = [
   { label: 'Food', value: 'Food' },
   { label: 'Transport', value: 'Transport' },
+  { label: 'Clothes', value: 'Clothes' },
+  { label: 'Apartment', value: 'Apartment' },
+  { label: 'Healthcare', value: 'Healthcare' },
+  { label: 'Beauty', value: 'Beauty' },
+  { label: 'Communication', value: 'Communication' },
+  { label: 'Pet', value: 'Pet' },
+  { label: 'Charity', value: 'Charity' },
+  { label: 'Uncategorized', value: 'Uncategorized' },
 ]
 
 export type CreateOperation = {

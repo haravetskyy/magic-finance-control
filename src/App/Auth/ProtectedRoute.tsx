@@ -8,8 +8,10 @@ type Props = Omit<RouteProps, 'children' | 'component' | 'render'> & {
   component: FC<{ userId: string }>
 }
 
-export const ProtectedRoute: FC<Props> = ({ authStatus, ...props }) =>
-  match(authStatus, {
+export const ProtectedRoute: FC<Props> = ({ authStatus, ...props }) => {
+  console.log(props)
+
+  return match(authStatus, {
     onInitial: () => <Loader />,
     onPending: () => <Loader />,
     onSuccess: ({ data }) => (
@@ -17,3 +19,4 @@ export const ProtectedRoute: FC<Props> = ({ authStatus, ...props }) =>
     ),
     onFailure: () => <Redirect to='/sign-in' />,
   })
+}
