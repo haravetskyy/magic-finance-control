@@ -1,6 +1,12 @@
 import { isNonEmpty, NonEmptyArray, of } from 'lib/Data/Array'
+import {
+  isNonNegativeNumber,
+  isNonZeroNumber,
+  NonNegativeNumber,
+  NonZeroNumber,
+} from 'lib/Data/Number'
 import { UnknownRecord } from 'lib/Data/Record'
-import isEmail from 'validator/es/lib/isEmail'
+import { Email, isEmail, isNonBlankString, NonBlankString } from 'lib/Data/String'
 import { failure, fromPredicate, isFailure, Result, success } from './Result'
 
 export type ValidationError = {
@@ -15,42 +21,45 @@ export const validationError = (message: string): ValidationError => ({
 
 type ValidationResult<I> = Result<I, NonEmptyArray<ValidationError>>
 
-export type Validator<I> = (input: I) => ValidationResult<I>
+export type Validator<I, O> = (input: I) => ValidationResult<O>
 
-export function sequence<I>(a: Validator<I>, b: Validator<I>): (input: I) => ValidationResult<I>
+export function sequence<I, A, O>(
+  a: Validator<I, A>,
+  b: Validator<A, O>,
+): (input: I) => ValidationResult<O>
+
+export function sequence<I, A, B, O>(
+  a: Validator<I, A>,
+  b: Validator<A, B>,
+  c: Validator<B, O>,
+): (input: I) => ValidationResult<O>
+
+export function sequence<I, A, B, C, O>(
+  a: Validator<I, A>,
+  b: Validator<A, B>,
+  c: Validator<B, C>,
+  d: Validator<C, O>,
+): (input: I) => ValidationResult<O>
+
+export function sequence<I, A, B, C, D, O>(
+  a: Validator<I, A>,
+  b: Validator<A, B>,
+  c: Validator<B, C>,
+  d: Validator<C, D>,
+  e: Validator<D, O>,
+): (input: I) => ValidationResult<O>
+
+export function sequence<I, A, B, C, D, E, O>(
+  a: Validator<I, A>,
+  b: Validator<A, B>,
+  c: Validator<B, C>,
+  d: Validator<C, D>,
+  e: Validator<D, E>,
+  f: Validator<E, O>,
+): (input: I) => ValidationResult<O>
 
 export function sequence<I>(
-  a: Validator<I>,
-  b: Validator<I>,
-  c: Validator<I>,
-): (input: I) => ValidationResult<I>
-
-export function sequence<I>(
-  a: Validator<I>,
-  b: Validator<I>,
-  c: Validator<I>,
-  d: Validator<I>,
-): (input: I) => ValidationResult<I>
-
-export function sequence<I>(
-  a: Validator<I>,
-  b: Validator<I>,
-  c: Validator<I>,
-  d: Validator<I>,
-  e: Validator<I>,
-): (input: I) => ValidationResult<I>
-
-export function sequence<I>(
-  a: Validator<I>,
-  b: Validator<I>,
-  c: Validator<I>,
-  d: Validator<I>,
-  e: Validator<I>,
-  f: Validator<I>,
-): (input: I) => ValidationResult<I>
-
-export function sequence<I>(
-  ...validators: NonEmptyArray<Validator<I>>
+  ...validators: NonEmptyArray<Validator<I, unknown>>
 ): (input: I) => ValidationResult<I> {
   return input => {
     const failures: Array<ValidationError> = []
@@ -67,8 +76,18 @@ export function sequence<I>(
   }
 }
 
-export type ValidationSchema<T extends UnknownRecord> = {
-  [K in keyof T]: Validator<T[K]>
+export type ValidationSchema<Input extends UnknownRecord> = Partial<
+  {
+    [K in keyof Input]: Validator<Input[K], unknown>
+  }
+>
+
+export type ValidatedValues<Input extends UnknownRecord, Schema extends ValidationSchema<Input>> = {
+  [K in keyof Input]: Schema[K] extends Validator<Input[K], infer Output>
+    ? Output
+    : Schema[K] extends Validator<Input[K], infer Output> | undefined
+    ? Output | Input[K]
+    : Input[K]
 }
 
 export type ValidationSchemaResult<T extends UnknownRecord> = Result<
@@ -76,17 +95,17 @@ export type ValidationSchemaResult<T extends UnknownRecord> = Result<
   Partial<Record<keyof T, NonEmptyArray<ValidationError>>>
 >
 
-export function validate<T extends UnknownRecord>(
-  validation: (values: T) => Partial<ValidationSchema<T>>,
-): (input: T) => ValidationSchemaResult<T> {
+export function validate<Input extends UnknownRecord, Validators extends ValidationSchema<Input>>(
+  validation: (values: Input) => Validators,
+): (input: Input) => ValidationSchemaResult<ValidatedValues<Input, Validators>> {
   return input => {
     const validationSchema = validation(input)
-    const failures: Partial<Record<keyof T, NonEmptyArray<ValidationError>>> = {}
+    const failures: Partial<Record<keyof Input, NonEmptyArray<ValidationError>>> = {}
 
     for (const key in input) {
       const validator = validationSchema[key]
 
-      if (validator !== undefined) {
+      if (validator) {
         const result = validator(input[key])
 
         if (isFailure(result)) {
@@ -95,48 +114,63 @@ export function validate<T extends UnknownRecord>(
       }
     }
 
-    return Object.keys(failures).length === 0 ? success(input) : failure(failures)
+    return Object.keys(failures).length === 0
+      ? success(input as ValidatedValues<Input, Validators>)
+      : failure(failures)
   }
 }
 
 /**
  * Validators
  */
-const email: Validator<string> = fromPredicate({
-  predicate: isEmail,
-  onFailure: () => of(validationError('Invalid e-mail!')),
-})
+const successValidator = <T>(): Validator<T, T> =>
+  fromPredicate({
+    predicate: () => true,
+    onFailure: () => of(validationError('This can never happen!')),
+  })
 
-function minLength<T extends string>(min: number): Validator<T> {
-  return fromPredicate({
+const email = <T extends string>(): Validator<T, Email> =>
+  fromPredicate({
+    predicate: isEmail,
+    onFailure: () => of(validationError('Invalid e-mail!')),
+  })
+
+const minLength = <T extends string>(min: number): Validator<T, T> =>
+  fromPredicate({
     predicate: i => i.length >= min,
     onFailure: () => of(validationError(`Input length cannot be smaller than ${min} characters!`)),
   })
-}
 
-function maxLength<T extends string>(max: number): Validator<T> {
-  return fromPredicate({
+const maxLength = <T extends string>(max: number): Validator<T, T> =>
+  fromPredicate({
     predicate: i => i.length < max,
     onFailure: () => of(validationError(`Input length cannot be smaller than ${max} characters!`)),
   })
-}
 
-function nonBlankString<T extends string>(): Validator<T> {
-  return fromPredicate({
-    predicate: i => i.trim() !== '',
+const nonBlankString = <T extends string>(): Validator<T, NonBlankString> =>
+  fromPredicate({
+    predicate: isNonBlankString,
     onFailure: () => of(validationError('Input cannot be a blank string!')),
   })
-}
 
-const nonNegative: Validator<number> = fromPredicate({
-  predicate: i => i >= 0,
-  onFailure: () => of(validationError('Input cannot be a negative number!')),
-})
+const nonNegativeNumber = <T extends number>(): Validator<T, NonNegativeNumber> =>
+  fromPredicate({
+    predicate: isNonNegativeNumber,
+    onFailure: () => of(validationError('Input cannot be a negative number!')),
+  })
+
+const nonZeroNumber = <T extends number>(): Validator<T, NonZeroNumber> =>
+  fromPredicate({
+    predicate: isNonZeroNumber,
+    onFailure: () => of(validationError('Input cannot be equal to 0!')),
+  })
 
 export const validators = {
   email,
   maxLength,
   minLength,
   nonBlankString,
-  nonNegative,
+  nonNegativeNumber,
+  nonZeroNumber,
+  success: successValidator,
 }

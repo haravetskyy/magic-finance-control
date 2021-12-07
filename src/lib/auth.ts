@@ -1,8 +1,9 @@
+import { Email, NonBlankString } from './Data/String'
 import { auth, firestore } from './firebase'
 
 type AuthCredentials = {
-  email: string
-  password: string
+  email: Email
+  password: NonBlankString
 }
 
 export type User = {
@@ -10,7 +11,12 @@ export type User = {
   email: string
 }
 
-export const createUser = (credentials: AuthCredentials) =>
+export type CreateUser = {
+  email: Email
+  password: string
+}
+
+export const createUser = (credentials: CreateUser) =>
   auth.createUserWithEmailAndPassword(credentials.email, credentials.password).then(({ user }) => {
     if (user !== null) {
       return firestore.collection('users').add({

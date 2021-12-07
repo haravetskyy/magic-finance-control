@@ -1,18 +1,26 @@
 import { NonEmptyArray } from 'lib/Data/Array'
 import { pipe } from 'lib/Data/pipe'
 import { UnknownRecord } from 'lib/Data/Record'
-import { isFailure, isSuccess, validate, ValidationError, ValidationSchema } from 'lib/Form'
-import { Reducer, SyntheticEvent, useReducer } from 'react'
+import {
+  isFailure,
+  isSuccess,
+  validate,
+  ValidatedValues,
+  ValidationError,
+  ValidationSchema,
+  Validator,
+} from 'lib/Form'
+import { Reducer, SyntheticEvent, useMemo, useReducer } from 'react'
 
-type UseFormOptions<T extends UnknownRecord> = {
-  initialValues: T
-  onSubmit: (data: T) => unknown
+type UseFormOptions<Input extends UnknownRecord, Schema extends ValidationSchema<Input>> = {
+  initialValues: Input
   validationStrategy: 'onChange' | 'onBlur'
-  validators: (values: T) => Partial<ValidationSchema<T>>
+  validators: (values: Input) => Schema
+  onSubmit: (data: ValidatedValues<Input, Schema>) => unknown
 }
 
 type FieldState<T> = {
-  errors: NonEmptyArray<ValidationError> | undefined
+  errors?: NonEmptyArray<ValidationError>
   touched: boolean
   value: T
 }
@@ -36,7 +44,7 @@ function initializeForm<T extends UnknownRecord>(data: T): FormState<T> {
   return result
 }
 
-function toValues<T extends Record<string, unknown>>(formState: FormState<T>): T {
+function toValues<T extends UnknownRecord>(formState: FormState<T>): T {
   const result = {} as T
 
   for (const key in formState) {
@@ -46,17 +54,18 @@ function toValues<T extends Record<string, unknown>>(formState: FormState<T>): T
   return result
 }
 
-export function useForm<T extends UnknownRecord>(options: UseFormOptions<T>) {
+export function useForm<Input extends UnknownRecord, Schema extends ValidationSchema<Input>>(
+  options: UseFormOptions<Input, Schema>,
+) {
   const { initialValues, onSubmit, validators, validationStrategy } = options
 
-  const initialState = initializeForm(initialValues)
-
   type Action =
-    | { id: 'Blur'; key: keyof T }
-    | { id: 'Change'; key: keyof T; value: T[keyof T] }
-    | { id: 'Validate'; key: keyof T }
+    | { id: 'Blur'; key: keyof Input }
+    | { id: 'Change'; key: keyof Input; value: Input[keyof Input] }
+    | { id: 'Validate'; key: keyof Input }
+    | { id: 'Reset' }
 
-  const reducer: Reducer<FormState<T>, Action> = (state, action) => {
+  const reducer: Reducer<FormState<Input>, Action> = (state, action) => {
     switch (action.id) {
       case 'Blur':
         return {
@@ -78,9 +87,11 @@ export function useForm<T extends UnknownRecord>(options: UseFormOptions<T>) {
 
       case 'Validate':
         const formValues = toValues(state)
-        const validator = validators(formValues)[action.key]
+        const validator = validators(formValues)[action.key] as
+          | Validator<Input[typeof action.key], ValidatedValues<Input, Schema>[typeof action.key]>
+          | undefined
 
-        if (validator !== undefined) {
+        if (validator) {
           const result = validator(formValues[action.key])
 
           return {
@@ -93,13 +104,21 @@ export function useForm<T extends UnknownRecord>(options: UseFormOptions<T>) {
         }
 
         return state
+
+      case 'Reset':
+        return initialState
     }
   }
 
+  const initialState = useMemo(() => initializeForm(initialValues), [])
+
   const [formState, dispatch] = useReducer(reducer, initialState)
 
-  const fieldProps = <K extends keyof T>(key: K): FieldProps<T[K]> => ({
-    onChange: (value: T[K]) => {
+  const values = useMemo(() => toValues(formState), [formState])
+
+  const fieldProps = <K extends keyof Input>(key: K): FieldProps<Input[K]> => ({
+    ...formState[key],
+    onChange: (value: Input[K]) => {
       dispatch({ id: 'Change', key, value })
 
       if (validationStrategy === 'onChange') {
@@ -113,7 +132,6 @@ export function useForm<T extends UnknownRecord>(options: UseFormOptions<T>) {
         dispatch({ id: 'Validate', key })
       }
     },
-    ...formState[key],
   })
 
   const handleSubmit = (event: SyntheticEvent): void => {
@@ -132,8 +150,12 @@ export function useForm<T extends UnknownRecord>(options: UseFormOptions<T>) {
     event.preventDefault()
   }
 
+  const handleReset = (): void => dispatch({ id: 'Reset' })
+
   return {
-    handleSubmit,
     fieldProps,
+    handleReset,
+    handleSubmit,
+    values,
   }
 }

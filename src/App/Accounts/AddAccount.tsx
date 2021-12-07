@@ -2,20 +2,15 @@ import { Button } from 'App/components/Button'
 import { TextField } from 'App/components/Input'
 import { SelectField } from 'App/components/Select'
 import { useForm } from 'App/hooks/useForm'
-import { Account, CreateAccount, currencies, Currency } from 'lib/accounts'
+import { Account, CreateAccount, currencies } from 'lib/accounts'
 import { validators } from 'lib/Form/Validation'
 import React from 'react'
 import './Accounts.scss'
 
-type FormValues = {
-  name: string
-  currency: Currency
+const initialValues: CreateAccount = {
+  name: '',
+  currency: '$',
 }
-
-const toFormValues = (data: CreateAccount | null): FormValues => ({
-  name: data === null ? '' : data.name,
-  currency: data === null ? ('' as Currency) : data.currency,
-})
 
 type AddAccountProps = {
   editableAccount: Account | null
@@ -24,10 +19,9 @@ type AddAccountProps = {
 
 export const AddAccount: React.FC<AddAccountProps> = props => {
   const { fieldProps, handleSubmit } = useForm({
-    initialValues: toFormValues(props.editableAccount),
+    initialValues: props.editableAccount || initialValues,
     validators: () => ({
       name: validators.maxLength(18),
-      currency: validators.nonBlankString<Currency>(),
     }),
     validationStrategy: 'onBlur',
     onSubmit: values => {
@@ -46,6 +40,7 @@ export const AddAccount: React.FC<AddAccountProps> = props => {
         className='add-account-form__input'
         placeholder='Account name'
       />
+
       <SelectField
         {...fieldProps('currency')}
         hiddenLabel='Choose a currency'

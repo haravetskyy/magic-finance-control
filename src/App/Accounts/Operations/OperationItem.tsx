@@ -1,5 +1,4 @@
 import { Button } from 'App/components/Button'
-import { Dialog } from 'App/components/Dialog'
 import { Operation } from 'lib/operations'
 import React from 'react'
 

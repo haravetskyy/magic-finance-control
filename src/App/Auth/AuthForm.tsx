@@ -8,17 +8,24 @@ import { sequence, validationError, validators } from 'lib/Form/Validation'
 import { Link } from 'react-router-dom'
 import './AuthForm.scss'
 
+type FormValues = {
+  email: string
+  password: string
+  confirmPassword: string
+}
+
+const initialValues: FormValues = {
+  email: '',
+  password: '',
+  confirmPassword: '',
+}
+
 export const SignUpForm = () => {
   const { fieldProps, handleSubmit } = useForm({
-    initialValues: {
-      email: '',
-      password: '',
-      confirmPassword: '',
-    },
-    onSubmit: createUser,
+    initialValues,
     validationStrategy: 'onChange',
-    validators: values => ({
-      email: validators.email,
+    validators: (values: FormValues) => ({
+      email: validators.email(),
       password: sequence(
         validators.minLength(6),
         validators.maxLength(24),
@@ -40,6 +47,7 @@ export const SignUpForm = () => {
         onFailure: () => of(validationError('Passwords do not match!')),
       }),
     }),
+    onSubmit: createUser,
   })
 
   return (
@@ -82,7 +90,7 @@ export const SignInForm = () => {
       password: '',
     },
     validators: () => ({
-      email: validators.nonBlankString(),
+      email: validators.email(),
       password: validators.nonBlankString(),
     }),
     validationStrategy: 'onBlur',

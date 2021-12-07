@@ -23,5 +23,5 @@ export const Button: React.FC<Props> = props => {
 
   const classNames = className([props.className, 'app-button', getButtonStyle()])
 
-  return <button {...props} className={classNames} type='submit' />
+  return <button {...props} className={classNames} />
 }

@@ -11,10 +11,8 @@ export function NumberInput(props: NumberInputProps) {
   const classNames = className([props.className, 'app-input'])
 
   const handleChange: ChangeEventHandler<HTMLInputElement> = e => {
-    props.onChange(e.currentTarget.valueAsNumber)
+    props.onChange(isNaN(e.currentTarget.valueAsNumber) ? 0 : e.currentTarget.valueAsNumber)
   }
-
-  const value = props.value === null ? undefined : props.value
 
   return (
     <input
@@ -23,7 +21,7 @@ export function NumberInput(props: NumberInputProps) {
       onBlur={props.onBlur}
       onChange={handleChange}
       type='number'
-      value={value}
+      value={props.value}
     />
   )
 }

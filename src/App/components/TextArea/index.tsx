@@ -9,7 +9,7 @@ type TextAreaProps = CommonProps & {
   onBlur: () => void
   onChange: (value: string) => void
   placeholder?: string
-  value: string | null
+  value: string
   cols?: number
   rows?: number
 }
@@ -21,9 +21,7 @@ export function TextArea(props: TextAreaProps) {
     props.onChange(event.currentTarget.value)
   }
 
-  return (
-    <textarea {...props} className={classNames} onChange={handleChange} value={props.value || ''} />
-  )
+  return <textarea {...props} className={classNames} onChange={handleChange} value={props.value} />
 }
 
 type TextAreaFieldProps = TextAreaProps & FieldProps<string>

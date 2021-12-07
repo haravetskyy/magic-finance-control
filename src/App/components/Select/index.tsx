@@ -28,9 +28,7 @@ export function Select<T extends string>(props: SelectProps<T>) {
   const classNames = cn([props.className, 'app-select'])
 
   const children = props.options.map(({ label, value }, key) => (
-    <option value={value} key={key}>
-      {label}
-    </option>
+    <option value={value} key={key} children={label} />
   ))
 
   const handleChange: ChangeEventHandler<HTMLSelectElement> = event => {
@@ -38,7 +36,11 @@ export function Select<T extends string>(props: SelectProps<T>) {
   }
 
   return (
-    <select {...selectProps} className={classNames} onChange={handleChange}>
+    <select
+      {...selectProps}
+      className={classNames}
+      onChange={handleChange}
+      value={selectProps.value || undefined}>
       {prepend(children, placeholder)}
     </select>
   )

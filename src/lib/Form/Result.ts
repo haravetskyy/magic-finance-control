@@ -1,3 +1,5 @@
+import { Predicate, Refinement } from 'lib/Data/Predicate'
+
 export type Result<S, F> = Success<S> | Failure<F>
 
 type Success<T> = {
@@ -28,14 +30,22 @@ export function isFailure<S, F>(r: Result<S, F>): r is Failure<F> {
   return r.id === 'Failure'
 }
 
-type Predicate<T> = (t: T) => boolean
+export function fromPredicate<A, B extends A, F>(params: {
+  predicate: Refinement<A, B>
+  onFailure: () => F
+}): (value: A) => Result<B, F>
 
-export function fromPredicate<S, F>({
+export function fromPredicate<A, F>(params: {
+  predicate: Predicate<A>
+  onFailure: () => F
+}): (value: A) => Result<A, F>
+
+export function fromPredicate<A, F>({
   predicate,
   onFailure,
 }: {
-  predicate: Predicate<S>
+  predicate: Predicate<A>
   onFailure: () => F
-}): (value: S) => Result<S, F> {
+}): (value: A) => Result<A, F> {
   return value => (predicate(value) ? success(value) : failure(onFailure()))
 }

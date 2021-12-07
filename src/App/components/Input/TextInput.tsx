@@ -14,8 +14,6 @@ export function TextInput(props: TextInputProps) {
     props.onChange(e.currentTarget.value)
   }
 
-  const value = props.value === null ? undefined : props.value
-
   return (
     <input
       className={classNames}
@@ -24,7 +22,7 @@ export function TextInput(props: TextInputProps) {
       onChange={handleChange}
       placeholder={props.placeholder}
       type={props.type || 'text'}
-      value={value}
+      value={props.value}
     />
   )
 }

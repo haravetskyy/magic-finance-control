@@ -16,15 +16,13 @@ export function DateInput(props: DateInputProps) {
     }
   }
 
-  const value = props.value === null ? undefined : props.value.toISOString().slice(0, 10)
-
   return (
     <input
       className={classNames}
       onBlur={props.onBlur}
       onChange={handleChange}
       type='date'
-      value={value}
+      value={props.value.toISOString().slice(0, 10)}
     />
   )
 }
